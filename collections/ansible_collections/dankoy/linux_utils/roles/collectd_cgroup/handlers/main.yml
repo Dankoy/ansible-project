@@ -1,5 +1,4 @@
 ---
-
 - name: Restart cgred
   ansible.builtin.service:
     name: cgred

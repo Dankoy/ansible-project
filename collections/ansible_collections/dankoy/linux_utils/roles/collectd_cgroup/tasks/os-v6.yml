@@ -1,5 +1,4 @@
 ---
-
 - name: Role collectd_cgroup | Install libcgroup package
   ansible.builtin.dnf:
     name: libcgroup

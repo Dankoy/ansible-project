@@ -1,5 +1,4 @@
 ---
-
 - name: Role collectd_cgroup | Install libcgroup package
   ansible.builtin.dnf:
     name: libcgroup
@@ -27,7 +26,7 @@
   ansible.builtin.lineinfile:
     dest: /etc/cgrules.conf
     regexp: ^root:collectd
-    line: 'root:collectd\tmemory\tcollectd/'
+    line: "root:collectd\\tmemory\\tcollectd/"
   notify: restart cgred
   tags: collectd_cgroup
 
