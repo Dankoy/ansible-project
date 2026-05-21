@@ -1,8 +1,7 @@
 ---
-
 - name: Add PostgreSQL GPG apt Key
   become: true
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     state: present
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -19,13 +18,14 @@
 
 - name: Update apt-get repo and cache
   become: true
-  ansible.builtin.apt: update_cache=yes
+  ansible.builtin.apt:
+    update_cache: "yes"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags: pg-client
 
 - name: Install packages
   become: true
-  ansible.builtin.apt: 
+  ansible.builtin.apt:
     name: postgresql-client
     state: present
     update_cache: true
