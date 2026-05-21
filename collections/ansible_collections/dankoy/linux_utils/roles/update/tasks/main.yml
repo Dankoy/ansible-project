@@ -1,8 +1,9 @@
 ---
-
 - name: Update apt-get repo and cache
   become: true
-  ansible.builtin.apt: update_cache=yes cache_valid_time=3600
+  ansible.builtin.apt:
+    update_cache: "yes"
+    cache_valid_time: "3600"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags: update
 
@@ -17,13 +18,14 @@
 - name: Check if reboot is necessary
   become: true
   register: reboot_required_file
-  ansible.builtin.stat: path=/var/run/reboot-required
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags: update
 
 - name: Reboot
   become: true
-  reboot:
+  ansible.builtin.reboot:
     msg: "Reboot initiated by Ansible"
     connect_timeout: 5
     reboot_timeout: 300

@@ -1,14 +1,15 @@
 ---
-
 - name: Update apt-get repo and cache
   become: true
-  ansible.builtin.apt: update_cache=yes cache_valid_time=3600
+  ansible.builtin.apt:
+    update_cache: "yes"
+    cache_valid_time: "3600"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags: timezone
 
 - name: Install tzdata
   become: true
-  ansible.builtin.apt: 
+  ansible.builtin.apt:
     name:
       - tzdata
     state: present
@@ -16,7 +17,7 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags: timezone
 
-- name: set timezone
+- name: Set timezone
   become: true
   timezone:
     name: "{{ timezone }}"
