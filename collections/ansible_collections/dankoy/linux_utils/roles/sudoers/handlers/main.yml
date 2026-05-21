@@ -2,4 +2,9 @@
 # handlers file for sudoers
 - name: Wheel permissions
   become: true
-  ansible.builtin.file: path=/etc/sudoers.d/wheel mode=0440 state=file owner=root group=root
+  ansible.builtin.file:
+    path: /etc/sudoers.d/wheel
+    mode: "0440"
+    state: file
+    owner: root
+    group: root
