@@ -1,15 +1,15 @@
 ---
 sudoers:
   - wheel
-  - evgenii
+  - dankoy
 
 users:
   - {
-      user: "evgenii",
+      user: "dankoy",
       groups: "wheel",
       state: "present",
       uid: 1349,
-      comment: "evgenii",
+      comment: "dankoy",
       skel: "yes",
       shell: "/bin/bash"
     }
