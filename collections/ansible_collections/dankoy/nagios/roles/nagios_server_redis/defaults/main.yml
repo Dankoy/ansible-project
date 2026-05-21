@@ -1,4 +1,4 @@
 ---
 
-collectd_redis_password: 123
-memory: 64G
+nagios_server_redis_collectd_redis_password: 123
+nagios_server_redis_memory: 64G
