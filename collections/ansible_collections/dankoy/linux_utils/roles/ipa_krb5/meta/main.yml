@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Thomas Woerner
   description: A role to configure krb5
@@ -7,6 +8,5 @@ galaxy_info:
 
   min_ansible_version: 2.0
 
-  galaxy_tags: [ 'identity', 'ipa']
-
+  galaxy_tags: ["identity", "ipa"]
 dependencies: []
