@@ -1,5 +1,4 @@
 ---
-
 - name: System details
   ansible.builtin.debug:
     msg: "{{ item }}"
@@ -62,7 +61,8 @@
 - name: Add repository into sources list
   become: true
   ansible.builtin.apt_repository:
-    repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architectures) | first }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architectures) | first }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution
+      | lower }} {{ ansible_distribution_release }} stable"
     state: present
     filename: docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -87,7 +87,7 @@
   ansible.builtin.user:
     name: {{ item.user }}
     append: true
-    groups: docker 
+    groups: docker
     uid: {{ item.uid }}
     state: {{ item.state }}
     comment: {{ item.comment }}
@@ -110,5 +110,3 @@
 #    mode: preserve
 #  notify: restart docker
 #  tags: docker
-
-
