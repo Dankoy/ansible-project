@@ -1,5 +1,6 @@
+---
 - name: Check mysql version
-  shell: echo "SHOW VARIABLES LIKE 'version_comment';" | mysql | awk -F " " '{print $2}' | grep -vi Value
+  ansible.builtin.shell: echo "SHOW VARIABLES LIKE 'version_comment';" | mysql | awk -F " " '{print $2}' | grep -vi Value
   register: mysql_installed
   ignore_errors: true
   tags: mysql-check
@@ -30,15 +31,13 @@
 #  delegate_to: localhost
 #  tags: mysql-check
 
-- name: append logs
-  local_action: shell echo "{{ inventory_hostname }} ~ {{ ansible_fqdn }}; OUT= {{ mysql_installed.stdout }}; ERR= {{ mysql_installed.stderr }}" >> /home/ezelenin/Documents/mysql-check/ansib.log
+- name: Append logs
+  ansible.builtin.shell: echo "{{ inventory_hostname }} ~ {{ ansible_fqdn }}; OUT= {{ mysql_installed.stdout }}; ERR= {{ mysql_installed.stderr }}" >>
+    /home/ezelenin/Documents/mysql-check/ansib.log
+  delegate_to: localhost
   tags: mysql-check
 
 #- name: append logs
 #  local_action: shell echo "\n" >> /home/ezelenin/Documents/ansib.log
 #  run_once: true
 #  tags: mysql-check
-
-
-
-
