@@ -8,20 +8,25 @@
     validate: "/usr/sbin/visudo -cf %s"
   tags: sudoers
 
-- name: create sudoers.d dir
+- name: Create sudoers.d dir
   become: true
-  file:
+  ansible.builtin.file:
     path: /etc/sudoers.d
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: root
     group: root
   tags: sudoers
 
-- name:  Accept WHEEL group for SUDO without password
+- name: Accept WHEEL group for SUDO without password
   become: true
-  ansible.builtin.template: src=sudoers.d/wheel.j2 dest=/etc/sudoers.d/{{ item }}  owner=root group=root mode=0440 backup=no
+  ansible.builtin.template:
+    src: sudoers.d/wheel.j2
+    dest: "/etc/sudoers.d/{{ item }} "
+    owner: root
+    group: root
+    mode: "0440"
+    backup: "no"
   notify: wheel permissions
   with_items: "{{ sudoers }}"
   tags: sudoers
-
