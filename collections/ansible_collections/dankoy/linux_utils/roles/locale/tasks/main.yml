@@ -1,58 +1,59 @@
 ---
-
-- name: remove iso-8599 locale
+- name: Remove iso-8599 locale
   become: true
-  command: "localedef --delete-from-archive en_US.iso88591"
+  ansible.builtin.command: "localedef --delete-from-archive en_US.iso88591"
   ignore_errors: true
   tags: locale
 
-- name: check if locale exists
+- name: Check if locale exists
   become: true
-  shell: "locale -a | grep -i {{ config_system_locale | regex_replace('-', '') | quote }}"
+  ansible.builtin.shell: "locale -a | grep -i {{ config_system_locale | regex_replace('-', '') | quote }}"
   register: found_locale
-  changed_when: no
-  failed_when: no
+  changed_when: false
+  failed_when: false
   tags: locale
 
-- name: create locale
+- name: Create locale
   become: true
-  command: "localedef -i {{ config_system_locale | regex_replace('(.*)\\..*', '\\1') | quote }} -f {{ config_system_locale | regex_replace('.*\\.(.*)', '\\1') | quote }} {{ config_system_locale | quote }}"
+  ansible.builtin.command: "localedef -i {{ config_system_locale | regex_replace('(.*)\\..*', '\\1') | quote }} -f {{ config_system_locale | regex_replace('.*\\.(.*)',
+    '\\1') | quote }} {{ config_system_locale | quote }}"
   when: not ansible_check_mode and found_locale.rc != 0
   tags: locale
 
-- name: check if language exists
+- name: Check if language exists
   become: true
-  shell: "locale -a | grep -i {{ config_system_language | regex_replace('-', '') | quote }}"
+  ansible.builtin.shell: "locale -a | grep -i {{ config_system_language | regex_replace('-', '') | quote }}"
   register: found_language
-  changed_when: no
-  failed_when: no
+  changed_when: false
+  failed_when: false
   tags: locale
 
-- name: create language
+- name: Create language
   become: true
-  command: "localedef -i {{ config_system_language | regex_replace('(.*)\\..*', '\\1') | quote }} -f {{ config_system_language | regex_replace('.*\\.(.*)', '\\1') | quote }} {{ config_system_language | quote }}"
+  ansible.builtin.command: "localedef -i {{ config_system_language | regex_replace('(.*)\\..*', '\\1') | quote }} -f {{ config_system_language | regex_replace('.*\\\
+    .(.*)', '\\1') | quote }} {{ config_system_language | quote }}"
   when: not ansible_check_mode and found_language.rc != 0
   tags: locale
 
 - name: Get current locale and language configuration
   become: true
-  command: localectl status
+  ansible.builtin.command: localectl status
   register: locale_status
   changed_when: false
   tags: locale
 
 - name: Parse 'LANG' from current locale and language configuration
-  set_fact:
+  ansible.builtin.set_fact:
     locale_lang: "{{ locale_status.stdout | regex_search('LANG=([^\n]+)', '\\1') | first }}"
   tags: locale
 
 - name: Parse 'LANGUAGE' from current locale and language configuration
-  set_fact:
+  ansible.builtin.set_fact:
     locale_language: "{{ locale_status.stdout | regex_search('LANGUAGE=([^\n]+)', '\\1') | default([locale_lang], true) | first }}"
   tags: locale
 
 - name: Configure locale to '{{ config_system_locale }}' and language to '{{ config_system_language }}'
   become: true
-  command: localectl set-locale LANG={{ config_system_locale }} LANGUAGE={{ config_system_language }}
+  ansible.builtin.command: localectl set-locale LANG={{ config_system_locale }} LANGUAGE={{ config_system_language }}
   changed_when: locale_lang != config_system_locale or locale_language != config_system_language
   tags: locale
