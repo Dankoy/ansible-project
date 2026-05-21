@@ -2,26 +2,26 @@
 # tasks file for ipaclient
 
 - name: Import variables specific to distribution
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - "{{ role_path }}/vars/{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
     - "{{ role_path }}/vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
     - "{{ role_path }}/vars/{{ ansible_distribution }}.yml"
     - "{{ role_path }}/vars/default.yml"
-    
-#- name: Import environment variable
-#  become: no
-#  include_vars:
-#   action: source ~/.bashrc
-#   delegate_to: localhost
+
+  #- name: Import environment variable
+  #  become: no
+  #  include_vars:
+  #   action: source ~/.bashrc
+  #   delegate_to: localhost
   #set_fact: 
   #  ipaadmin_password: "{{ lookup('env','HOME') }}"
-  
+
 - name: Import environment variable
-  become: no
+  become: false
   delegate_to: localhost
-  set_fact: 
-    ipaadmin_password: "{{ lookup('env','IPAADMIN_PASSWORD') }}"  
+  ansible.builtin.set_fact:
+    ipaadmin_password: "{{ lookup('env', 'IPAADMIN_PASSWORD') }}"
 
 - name: Install IPA client
   ansible.builtin.include_tasks: tasks/install.yml

@@ -1,16 +1,17 @@
+---
 - block:
-  - name: Verify Python3 import
-    script: py3test.py
-    register: py3test
-    failed_when: False
-    changed_when: False
+    - name: Verify Python3 import
+      ansible.builtin.script: py3test.py
+      register: py3test
+      failed_when: false
+      changed_when: false
 
-  - name: Set python interpreter to 3
-    set_fact:
-      ansible_python_interpreter: "/usr/bin/python3"
-    when: py3test.rc == 0
+    - name: Set python interpreter to 3
+      ansible.builtin.set_fact:
+        ansible_python_interpreter: "/usr/bin/python3"
+      when: py3test.rc == 0
 
-  - name: Set python interpreter to 2
-    set_fact:
-      ansible_python_interpreter: "/usr/bin/python2"
-    when: py3test.failed or py3test.rc != 0
+    - name: Set python interpreter to 2
+      ansible.builtin.set_fact:
+        ansible_python_interpreter: "/usr/bin/python2"
+      when: py3test.failed or py3test.rc != 0
