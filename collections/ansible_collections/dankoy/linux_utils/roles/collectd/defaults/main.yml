@@ -1,14 +1,13 @@
 ---
 
-collectd_graphite_hostname         : "graphite.unix.whatever.ru"
-collectd_graphite_port             : "2003"
+collectd_graphite_hostname: "graphite.unix.whatever.ru"
+collectd_graphite_port: "2003"
 #collectd_graphite_host_environment : "production"
 #collectd_install                   : "binary" ## binary or source
 #collectd_source_version            : "collectd-5.4.1"
 #collectd_source_install            : /opt/collectd/
-collectd_etc                       : /etc/collectd
-collectd_etc_plugins               : /etc/collectd.d
-
+collectd_etc: /etc/collectd
+collectd_etc_plugins: /etc/collectd.d
 
 ## Plugins Config
 #collectd_mysql:
@@ -30,8 +29,7 @@ default_plugins:
   - swap
   - syslog
   - vmem
-    
-# dummy plugin. FIX  empty array iteration error 
-collectd_extra_plugins: 
-  - dummy_plugin
 
+# dummy plugin. FIX  empty array iteration error 
+collectd_extra_plugins:
+  - dummy_plugin

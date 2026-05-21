@@ -1,59 +1,57 @@
 ---
-
-- name: collectd | install disk plugin
-  ansible.builtin.dnf: 
-     name=collectd-disk
-     state=present
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6" and "disk" in default_plugins) or
-        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "6" and "disk" in default_plugins)
+- name: collectd | Install disk plugin
+  ansible.builtin.dnf:
+    name: collectd-disk
+    state: present
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6" and "disk" in default_plugins) or (ansible_distribution == "RedHat" and
+    ansible_distribution_major_version == "6" and "disk" in default_plugins)
   tags: collectd
 
-- name: collectd | install mysql plugin
+- name: collectd | Install mysql plugin
   ansible.builtin.dnf:
-     name=collectd-mysql
-     state=present
+    name: collectd-mysql
+    state: present
   when: ("mysql" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | install memcache plugin
-  ansible.builtin.dnf: 
-    name=collectd-memcachec
-    state=present
+- name: collectd | Install memcache plugin
+  ansible.builtin.dnf:
+    name: collectd-memcachec
+    state: present
   when: ("memcache" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | install varnish plugin
-  ansible.builtin.dnf: 
-    name=collectd-varnish 
-    state=present
+- name: collectd | Install varnish plugin
+  ansible.builtin.dnf:
+    name: collectd-varnish
+    state: present
   when: ("varnish" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | install nginx plugin
-  ansible.builtin.dnf: 
-     name=collectd-nginx 
-     state=present
+- name: collectd | Install nginx plugin
+  ansible.builtin.dnf:
+    name: collectd-nginx
+    state: present
   when: ("nginx" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | install apache plugin
+- name: collectd | Install apache plugin
   ansible.builtin.dnf:
-     name=collectd-apache
-     state=present
+    name: collectd-apache
+    state: present
   when: ("apache_status" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | install redis plugin
+- name: collectd | Install redis plugin
   ansible.builtin.dnf:
-     name=collectd-redis
-     state=present
+    name: collectd-redis
+    state: present
   when: ("redis" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | install postgresql plugin
+- name: collectd | Install postgresql plugin
   ansible.builtin.dnf:
-     name=collectd-postgresql
-     state=present
+    name: collectd-postgresql
+    state: present
   when: ("postgresql" in collectd_extra_plugins)
   tags: collectd
-

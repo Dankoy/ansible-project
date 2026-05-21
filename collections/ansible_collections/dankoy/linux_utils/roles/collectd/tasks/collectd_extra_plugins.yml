@@ -1,90 +1,88 @@
 ---
-
-- name: collectd | write config for collectd apache plugin
+- name: collectd | Write config for collectd apache plugin
   ansible.builtin.template:
-     src=apache-plugin.conf.j2
-     dest="{{collectd_etc_plugins}}/apache-plugin.conf"
-     owner=root
-     group=root
-     mode=0644
+    src: apache-plugin.conf.j2
+    dest: "{{ collectd_etc_plugins }}/apache-plugin.conf"
+    owner: root
+    group: root
+    mode: "0644"
   notify: restart collectd
   when: ("apache_status" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | write config for collectd mysql plugin
+- name: collectd | Write config for collectd mysql plugin
   ansible.builtin.template:
-     src=mysql.conf.j2
-     dest="{{collectd_etc_plugins}}/mysql.conf"
-     owner=root
-     group=root
-     mode=0600
+    src: mysql.conf.j2
+    dest: "{{ collectd_etc_plugins }}/mysql.conf"
+    owner: root
+    group: root
+    mode: "0600"
   notify: restart collectd
   when: ("mysql" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | write config for varnish plugin
+- name: collectd | Write config for varnish plugin
   ansible.builtin.template:
-    src=varnish.conf.j2
-    dest="{{collectd_etc_plugins}}/varnish.conf"
-    owner=root
-    group=root
-    mode=0644
+    src: varnish.conf.j2
+    dest: "{{ collectd_etc_plugins }}/varnish.conf"
+    owner: root
+    group: root
+    mode: "0644"
   notify: restart collectd
   when: ("varnish" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | write config for nginx plugin
+- name: collectd | Write config for nginx plugin
   ansible.builtin.template:
-    src=nginx.conf.j2
-    dest="{{collectd_etc_plugins}}/nginx.conf"
-    owner=root
-    group=root
-    mode=0644
+    src: nginx.conf.j2
+    dest: "{{ collectd_etc_plugins }}/nginx.conf"
+    owner: root
+    group: root
+    mode: "0644"
   notify: restart collectd
   when: ("nginx" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | write config for collectd tail plugin
+- name: collectd | Write config for collectd tail plugin
   ansible.builtin.template:
-     src=tail-plugin.conf.j2
-     dest="{{collectd_etc_plugins}}/tail-plugin.conf"
-     owner=root
-     group=root
-     mode=0644
+    src: tail-plugin.conf.j2
+    dest: "{{ collectd_etc_plugins }}/tail-plugin.conf"
+    owner: root
+    group: root
+    mode: "0644"
   notify: restart collectd
   when: ("tail" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | write config for memcached plugin
+- name: collectd | Write config for memcached plugin
   ansible.builtin.template:
-    src=memcached.conf.j2
-    dest="{{collectd_etc_plugins}}/memcached.conf"
-    owner=root
-    group=root
-    mode=0644
+    src: memcached.conf.j2
+    dest: "{{ collectd_etc_plugins }}/memcached.conf"
+    owner: root
+    group: root
+    mode: "0644"
   notify: restart collectd
   when: ("memcached" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | write config for redis plugin
+- name: collectd | Write config for redis plugin
   ansible.builtin.template:
-    src=redis.conf.j2
-    dest="{{collectd_etc_plugins}}/redis.conf"
-    owner=root
-    group=root
-    mode=0644
+    src: redis.conf.j2
+    dest: "{{ collectd_etc_plugins }}/redis.conf"
+    owner: root
+    group: root
+    mode: "0644"
   notify: restart collectd
   when: ("redis" in collectd_extra_plugins)
   tags: collectd
 
-- name: collectd | write config for postgresql plugin
+- name: collectd | Write config for postgresql plugin
   ansible.builtin.template:
-    src=postgresql.conf.j2
-    dest="{{collectd_etc_plugins}}/postgresql.conf"
-    owner=root
-    group=root
-    mode=0644
+    src: postgresql.conf.j2
+    dest: "{{ collectd_etc_plugins }}/postgresql.conf"
+    owner: root
+    group: root
+    mode: "0644"
   notify: restart collectd
   when: ("postgresql" in collectd_extra_plugins)
   tags: collectd
-
