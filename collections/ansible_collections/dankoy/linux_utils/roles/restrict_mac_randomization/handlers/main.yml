@@ -1,7 +1,7 @@
 ---
 # restart network
-- name: restart network
+- name: Restart network
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: networking
   tags: restrict-mac-randomization

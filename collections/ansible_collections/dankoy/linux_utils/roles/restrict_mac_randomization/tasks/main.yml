@@ -1,14 +1,12 @@
 ---
-
 - name: Disable mac randomization
   become: true
-  ansible.builtin.template: 
-    src: 90-disable-randomization.j2 
+  ansible.builtin.template:
+    src: 90-disable-randomization.j2
     dest: /etc/NetworkManager/conf.d/90-disable-randomization.conf
-    owner: root 
-    group: root 
-    mode: 0440 
-    backup: no
-  notify: restart network
+    owner: root
+    group: root
+    mode: "0440"
+    backup: false
+  notify: Restart network
   tags: restrict-mac-randomization
-
