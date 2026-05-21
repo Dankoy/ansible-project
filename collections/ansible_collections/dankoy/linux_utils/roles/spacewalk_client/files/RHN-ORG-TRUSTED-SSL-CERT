@@ -1,0 +1,93 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            fe:c1:1f:5c:f1:d7:60:d1
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=RU, ST=N, L=Moscow, O=Organization, OU=spw.whatever.ru, CN=spw.whatever.ru
+        Validity
+            Not Before: Sep 11 09:18:19 2017 GMT
+            Not After : Sep  6 09:18:19 2036 GMT
+        Subject: C=RU, ST=N, L=Moscow, O=Organization, OU=spw.whatever.ru, CN=spw.whatever.ru
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:b0:78:c5:23:00:80:8a:7a:e4:3f:72:d2:0e:0d:
+                    33:16:c5:91:b6:97:5b:c4:90:be:aa:9f:2e:0f:bf:
+                    6e:59:ca:16:8b:2f:2d:5b:16:86:45:a4:fa:8f:15:
+                    9d:7f:ca:50:07:8d:4d:c7:e2:0f:43:1b:68:0d:e3:
+                    bd:c9:74:3f:59:83:7f:a3:0c:ef:cd:f0:0a:c3:a3:
+                    4a:f6:88:91:7b:95:b0:ce:e7:18:7a:ff:51:36:f1:
+                    bd:3a:be:81:91:fd:c4:1b:93:3b:29:69:22:d3:f8:
+                    91:d0:7a:d4:cb:66:5c:c1:21:c6:73:64:96:ca:59:
+                    63:be:79:87:d7:f6:b9:99:8c:be:ea:f1:49:52:d5:
+                    33:e8:3d:11:24:55:4b:ad:70:19:d6:b5:01:dc:9a:
+                    0b:03:ca:23:63:77:86:4f:0b:08:67:d7:9d:08:a2:
+                    48:c1:a8:58:7a:47:22:61:1c:03:e0:02:c0:12:b3:
+                    dd:ca:43:62:33:73:3d:a6:fa:42:95:d4:e0:69:46:
+                    2d:95:01:22:73:ca:5e:6c:7c:a3:f7:9a:3f:8b:09:
+                    01:bc:9e:b2:9a:03:96:d7:31:b5:cf:3b:99:82:5a:
+                    94:48:7d:e0:58:c3:d0:bd:1e:a3:df:56:f2:1f:ea:
+                    c4:f9:31:a0:2e:3b:a4:a7:1a:88:17:6b:ef:0e:03:
+                    e8:c5
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:TRUE
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment, Certificate Sign
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            Netscape Comment: 
+                RHN SSL Tool Generated Certificate
+            X509v3 Subject Key Identifier: 
+                90:D5:8F:1F:8F:75:9A:27:84:A1:96:B7:7C:C2:12:5E:96:79:5E:C3
+            X509v3 Authority Key Identifier: 
+                keyid:90:D5:8F:1F:8F:75:9A:27:84:A1:96:B7:7C:C2:12:5E:96:79:5E:C3
+                DirName:/C=RU/ST=N/L=Moscow/O=Organization/OU=spw.whatever.ru/CN=spw.whatever.ru
+                serial:FE:C1:1F:5C:F1:D7:60:D1
+
+    Signature Algorithm: sha256WithRSAEncryption
+         32:12:d0:98:14:8d:99:dd:63:2a:5e:f4:32:56:68:94:c6:42:
+         1c:9a:1c:62:6e:44:08:f2:24:9c:c4:63:40:50:e1:77:b3:2d:
+         ed:df:91:8f:38:bb:0d:d9:76:3a:6b:a5:bf:d7:54:b4:f7:a8:
+         90:b2:62:e4:78:e2:fd:1d:f8:20:9a:91:79:29:15:09:7e:e3:
+         38:17:b9:53:81:1c:bf:be:1f:af:3a:62:1e:12:11:b7:cb:ae:
+         f6:27:89:74:a4:81:6c:76:49:fb:5d:eb:5e:74:7c:1a:10:31:
+         43:41:f5:b1:92:1a:f5:ec:ac:58:3e:a0:ff:b0:91:af:12:6b:
+         3e:90:53:52:10:20:c4:b4:d9:af:7d:66:a1:0c:7e:93:dd:9f:
+         69:60:67:01:22:4d:6b:b7:dd:59:5d:49:2f:5d:6b:42:ca:74:
+         82:c8:f0:65:57:0b:de:d1:7d:12:aa:9b:41:c5:75:c2:19:70:
+         db:e8:90:df:0e:6e:89:19:2f:0c:a5:2f:ec:a2:a9:f9:54:01:
+         84:0e:2e:dc:cf:c6:2b:b0:94:ef:64:c2:a2:d0:bb:49:56:ba:
+         1e:bd:61:65:0a:1a:f6:eb:1c:e2:13:8d:ea:ee:ba:c5:7d:38:
+         48:da:3f:de:01:6e:f4:3e:48:39:1b:09:89:f6:8f:a0:54:45:
+         60:51:e3:7b
+-----BEGIN CERTIFICATE-----
+MIIEhTCCA22gAwIBAgIJAP7BH1zx12DRMA0GCSqGSIb3DQEBCwUAMGkxCzAJBgNV
+BAYTAlJVMQowCAYDVQQIDAFOMQ8wDQYDVQQHDAZNb3Njb3cxETAPBgNVBAoMCERh
+dGFsaW5lMRQwEgYDVQQLDAtzcHcuZHRsbi5ydTEUMBIGA1UEAwwLc3B3LmR0bG4u
+cnUwHhcNMTcwOTExMDkxODE5WhcNMzYwOTA2MDkxODE5WjBpMQswCQYDVQQGEwJS
+VTEKMAgGA1UECAwBTjEPMA0GA1UEBwwGTW9zY293MREwDwYDVQQKDAhEYXRhbGlu
+ZTEUMBIGA1UECwwLc3B3LmR0bG4ucnUxFDASBgNVBAMMC3Nwdy5kdGxuLnJ1MIIB
+IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsHjFIwCAinrkP3LSDg0zFsWR
+tpdbxJC+qp8uD79uWcoWiy8tWxaGRaT6jxWdf8pQB41Nx+IPQxtoDeO9yXQ/WYN/
+owzvzfAKw6NK9oiRe5WwzucYev9RNvG9Or6Bkf3EG5M7KWki0/iR0HrUy2ZcwSHG
+c2SWylljvnmH1/a5mYy+6vFJUtUz6D0RJFVLrXAZ1rUB3JoLA8ojY3eGTwsIZ9ed
+CKJIwahYekciYRwD4ALAErPdykNiM3M9pvpCldTgaUYtlQEic8pebHyj95o/iwkB
+vJ6ymgOW1zG1zzuZglqUSH3gWMPQvR6j31byH+rE+TGgLjukpxqIF2vvDgPoxQID
+AQABo4IBLjCCASowDAYDVR0TBAUwAwEB/zALBgNVHQ8EBAMCAqQwHQYDVR0lBBYw
+FAYIKwYBBQUHAwEGCCsGAQUFBwMCMDEGCWCGSAGG+EIBDQQkFiJSSE4gU1NMIFRv
+b2wgR2VuZXJhdGVkIENlcnRpZmljYXRlMB0GA1UdDgQWBBSQ1Y8fj3WaJ4Shlrd8
+whJelnlewzCBmwYDVR0jBIGTMIGQgBSQ1Y8fj3WaJ4Shlrd8whJelnlew6FtpGsw
+aTELMAkGA1UEBhMCUlUxCjAIBgNVBAgMAU4xDzANBgNVBAcMBk1vc2NvdzERMA8G
+A1UECgwIRGF0YWxpbmUxFDASBgNVBAsMC3Nwdy5kdGxuLnJ1MRQwEgYDVQQDDAtz
+cHcuZHRsbi5ydYIJAP7BH1zx12DRMA0GCSqGSIb3DQEBCwUAA4IBAQAyEtCYFI2Z
+3WMqXvQyVmiUxkIcmhxibkQI8iScxGNAUOF3sy3t35GPOLsN2XY6a6W/11S096iQ
+smLkeOL9HfggmpF5KRUJfuM4F7lTgRy/vh+vOmIeEhG3y672J4l0pIFsdkn7Xete
+dHwaEDFDQfWxkhr17KxYPqD/sJGvEms+kFNSECDEtNmvfWahDH6T3Z9pYGcBIk1r
+t91ZXUkvXWtCynSCyPBlVwve0X0SqptBxXXCGXDb6JDfDm6JGS8MpS/soqn5VAGE
+Di7cz8YrsJTvZMKi0LtJVroevWFlChr26xziE43q7rrFfThI2j/eAW70Pkg5GwmJ
+9o+gVEVgUeN7
+-----END CERTIFICATE-----

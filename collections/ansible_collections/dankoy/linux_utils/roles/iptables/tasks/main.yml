@@ -1,0 +1,117 @@
+---
+
+- name: check if docker is running
+  become: false
+  command: systemctl is-active docker
+  ignore_errors: true
+  register: docker_state
+  changed_when: false
+  tags: iptables
+
+- name: Fail if docker is active
+  become: false
+  fail: 
+    msg: "Docker is running. Stop it before changing iptables"
+  when: docker_state.stdout == 'active'
+  tags: iptables
+
+- name: Disable ufw
+  become: true
+  systemd:
+    name: ufw
+    enabled: false
+    state: stopped
+  ignore_errors: true
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: iptables
+
+- name: Install iptables persistent
+  become: true
+  ansible.builtin.apt:
+    name: "iptables-persistent"
+    state: latest
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: iptables
+
+- name: Start and endble iptables persistent
+  become: true
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+    enabled: true
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  loop: [ "iptables" ]
+  tags: iptables
+
+- name: Allow related and established connections
+  become: true
+  iptables:
+    chain: INPUT
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+    comment: Allow related and established
+  tags: iptables
+
+- name: Allow localhost
+  become: true
+  iptables:
+    chain: INPUT
+    jump: ACCEPT
+    in_interface: lo
+    comment: Allow localhost
+  tags: iptables
+
+- name: Allow new incoming SYN packets on TCP port 22 (SSH)
+  become: true
+  iptables:
+    chain: INPUT
+    destination_port: '22'
+    protocol: tcp
+    ctstate: NEW
+    syn: match
+    jump: ACCEPT
+    comment: Accept new SSH connections
+  tags: iptables
+
+- name: allow any and all types of ICMP packets on the input chain
+  become: true
+  iptables:
+    chain: INPUT
+    protocol: icmp
+    jump: ACCEPT
+  tags: iptables
+
+- name: Allow monit
+  become: true
+  iptables:
+    action: insert
+    chain: INPUT
+    jump: ACCEPT
+    in_interface: "{{ ansible_default_ipv4.interface  }}"
+    protocol: tcp
+    source: any
+    destination_port: '2812'
+    comment: monit
+  tags: iptables
+
+- name: Reject any 
+  become: true
+  iptables:
+    chain: INPUT
+    jump: REJECT
+  tags: iptables
+
+- name: Reject in forward
+  become: true
+  iptables:
+    chain: FORWARD
+    jump: REJECT
+  tags: iptables
+
+
+- name: Save current state of the firewall in system file
+  become: true
+  command: netfilter-persistent save
+  notify: Restart iptables
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: iptables

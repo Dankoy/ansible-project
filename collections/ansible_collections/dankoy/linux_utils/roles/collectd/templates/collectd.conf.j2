@@ -1,0 +1,20 @@
+# {{ ansible_managed }}
+
+Interval     5
+ReadThreads  7
+# Hostname {{ ansible_hostname }}
+FQDNLookup true
+BaseDir     "/var/lib/collectd"
+PluginDir   "/usr/lib64/collectd"
+TypesDB     "/usr/share/collectd/types.db"
+
+LoadPlugin logfile
+
+#<Plugin "logfile">
+#  LogLevel "info"
+#  File "/var/log/collectd.log"
+#  Timestamp true
+#</Plugin>
+
+
+Include "/etc/collectd.d/*.conf"

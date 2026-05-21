@@ -1,0 +1,114 @@
+---
+
+- name: System details
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+  with_items:
+    - "{{ ansible_distribution }}"
+    - "{{ ansible_architecture }}"
+    - "{{ ansible_distribution_version }}"
+    - "{{ ansible_distribution_release }}"
+    - "{{ ansible_distribution_major_version }}"
+  tags: docker
+
+- name: Debug message
+  ansible.builtin.debug:
+    msg: "{{ [ansible_architecture] | map('extract', deb_architectures) | first }}"
+  tags: docker
+
+- name: Install dependencies
+  become: true
+  ansible.builtin.apt:
+    name:
+      - net-tools
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+      - gnupg-agent
+      - autoconf
+      - dpkg-dev
+      - file
+      - g++
+      - gcc
+      - libc-dev
+      - make
+      - pkg-config
+      - re2c
+      - wget
+    state: present
+    update_cache: true
+  tags: docker
+
+- name: Add Docker GPG apt Key
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: docker
+
+#- name: Add repository into sources list
+#  ansible.builtin.ansible.builtin.apt_repository:
+#    repo: deb [arch=amd64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+#    repo: [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+#    state: present
+#    filename: docker
+#  tags: docker
+
+- name: Add repository into sources list
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architectures) | first }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    state: present
+    filename: docker
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: docker
+
+- name: Install Docker
+  become: true
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  notify: restart docker
+  tags: docker
+
+- name: Setup docker user
+  become: true
+  ansible.builtin.user:
+    name: {{ item.user }}
+    append: true
+    groups: docker 
+    uid: {{ item.uid }}
+    state: {{ item.state }}
+    comment: {{ item.comment }}
+    shell: {{ item.shell }}
+  with_items: "{{ users }}"
+  when: item.state == "present"
+  ignore_errors: true
+  tags: docker
+
+#- name: Create Docker-Compose symlink
+#  ansible.builtin.command:
+#    cmd: ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+#    creates: /usr/bin/docker-compose
+#  tags: docker
+
+#- name: Add private registry
+#  ansible.builtin.template:
+#    src: daemon.j2
+#    dest: /etc/docker/daemon.json
+#    mode: preserve
+#  notify: restart docker
+#  tags: docker
+
+

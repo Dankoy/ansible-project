@@ -1,0 +1,25 @@
+---
+
+- name: Copy plugin to client machine
+  ansible.builtin.copy:
+    src: check_swapio
+    dest: /usr/lib64/nagios/plugins/check_swapio
+    owner: root
+    mode: "0755"
+  tags:
+    - nagios
+    - nagios_swapio
+    - nagios_client_swapio
+
+- name: Copy command cfg
+  ansible.builtin.template:
+    src: swapio.j2
+    dest: /etc/nrpe.d/swapio.cfg
+    owner: root
+    mode: "0644"
+  notify:
+    - Restart nrpe
+  tags:
+    - nagios
+    - nagios_swapio
+    - nagios_client_swapio

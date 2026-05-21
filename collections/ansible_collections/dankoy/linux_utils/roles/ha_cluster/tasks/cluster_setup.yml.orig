@@ -1,0 +1,51 @@
+# Generate password locally
+- name: Generate password localy
+  local_action: command pwgen 24 1 -B
+  register: pass
+  run_once: true
+  become: false
+  tags: ha-cluster
+
+# Create user hacluster
+- name: Create cluster system user
+  user: 
+    name={{ cluster_user }} comment='cluster user' shell=/sbin/nologin state=present
+    password={{ pass.stdout | password_hash('sha512', ansible_hostname|replace('-','x')|truncate(16, True, '')) }}
+  tags: ha-cluster
+
+# Authorize nodes 
+- name: Authorize cluster nodes
+  pcs_auth: node_name={{ hostvars[item]['ansible_fqdn'].split('.')[0] }} username={{ cluster_user }} password={{ pass.stdout }}
+  with_items: "{{ play_hosts }}"
+  run_once: true
+  tags: ha-cluster
+
+# Setup cluster
+- name: Setup cluster
+  pcs_cluster: node_list="{% for item in play_hosts %}{{ hostvars[item]['ansible_hostname'] }} {% endfor %}" cluster_name="{{ cluster_name }}" transport="{{ cluster_transport }}"
+  run_once: true
+  tags: ha-cluster
+
+
+# Start cluster on all nodes
+- name: Start cluster on all nodes
+  command: pcs cluster start --all
+  run_once: true
+  tags: ha-cluster
+
+  
+# Only for two nodes cluster. 
+# Disable property stonith-enabled
+- name: Stonith disable
+  pcs_property: name="stonith-enabled" value="false"
+  when: play_hosts|count() == 2
+  run_once: true
+  tags: ha-cluster
+  
+# Only for two nodes cluster. 
+# Ignore quorum
+- name: Quorum ignore
+  pcs_property: name="no-quorum-policy" value="ignore"
+  when: play_hosts|count() == 2
+  run_once: true
+  tags: ha-cluster

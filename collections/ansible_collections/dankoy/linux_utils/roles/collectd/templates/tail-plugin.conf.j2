@@ -1,0 +1,26 @@
+LoadPlugin tail
+
+<Plugin tail>
+  <File "{{ graphite_tail_log }}">
+  	Instance "{{ graphite_tail_instance }}"
+	<Match>
+		Regex " 5[0-9][0-9] "
+		DSType "CounterInc"
+		Type "counter"
+	    Instance "5XX"
+	</Match>
+	<Match>
+		Regex " 4[0-9][0-9] "
+		DSType "CounterInc"
+		Type "counter"
+	    Instance "4XX"
+	</Match>
+	<Match>
+		Regex " 200 "
+		DSType "CounterInc"
+		Type "counter"
+	    Instance "200"
+	</Match>
+
+  </File>
+</Plugin>

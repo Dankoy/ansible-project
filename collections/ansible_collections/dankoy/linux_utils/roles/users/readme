@@ -1,0 +1,21 @@
+Создание пользователей для сотрудников не входящих в группу администраторов.
+
+Публичный ключ должен находиться в public_keys/user1.pub.
+Имя файла должно совпадать с именем пользователя.
+
+Для роли в group_vars/all определен массив с пользователями:
+
+whatever_users:
+ - { user: 'user1', uid: '100500', state: 'present', groups: 'network_engineers', comment: 'network_engineer' , skel: 'yes'}
+ - { user: 'user2', uid: '100501', state: 'present', groups: 'network_engineers', comment: 'duty_system_operator', skel: 'no' }
+ - { user: 'user3', uid: '100502', state: 'present', groups: 'network_engineers', comment: 'duty_system_operator' }
+ - { user: 'user4', state: 'absent'}
+
+Группа Объявляется здесь в переменных, учесть!
+
+При state: 'present' создается пользователь с указанным именем, uid, комментарием и прописывается ключ.
+При state НЕ РАВНОМУ present пользователь удаляется.
+
+Если skel=yes то копируется файл {{ item.user }}/.bashrc dest=/home/{{ item.user }}/.bashrc
+Переменная может быть не определена, тогда действия не происходит.
+Наличие файла необходимо.

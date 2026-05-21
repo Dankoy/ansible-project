@@ -1,0 +1,126 @@
+---
+
+#- name: Create docker-user chain
+#  iptables:
+#    chain: DOCKER-USER
+#    chain_management: true
+#    state: present
+#  become: true
+#  tags: iptables
+
+- name: Get existing iptables rules
+  become: true
+  ansible.builtin.command: iptables -nL
+  changed_when: false
+  register: jforwarder_iptables_iptables_rules
+  tags: jforwarder_iptables
+  
+- name: Create DOCKER-USER chain
+  become: true
+  ansible.builtin.command: iptables -N '{{ item }}'
+  when: not jforwarder_iptables_iptables_rules.stdout is search("{{ item }}")
+  with_items:
+    - DOCKER-USER
+  tags: jforwarder_iptables
+
+- name: Reject all
+  become: true
+  ansible.builtin.iptables:
+    action: insert
+    chain: DOCKER-USER
+    jump: REJECT
+    in_interface: "{{ ansible_default_ipv4.interface }}"
+  tags: jforwarder_iptables
+
+- name: Allow postgresql
+  become: true
+  ansible.builtin.iptables:
+    action: insert
+    chain: DOCKER-USER
+    jump: ACCEPT
+    in_interface: "{{ ansible_default_ipv4.interface }}"
+    protocol: tcp
+    source: 192.168.1.57
+    destination_port: '5432'
+    comment: db
+  tags: jforwarder_iptables
+
+- name: Allow postgresql telegram-chat-service
+  become: true
+  ansible.builtin.iptables:
+    action: insert
+    chain: DOCKER-USER
+    jump: ACCEPT
+    in_interface: "{{ ansible_default_ipv4.interface }}"
+    protocol: tcp
+    source: 192.168.1.57
+    destination_port: '5433'
+    comment: db
+  tags: jforwarder_iptables
+
+- name: Allow grafana
+  become: true
+  ansible.builtin.iptables:
+    action: insert
+    chain: DOCKER-USER
+    jump: ACCEPT
+    in_interface: "{{ ansible_default_ipv4.interface }}"
+    protocol: tcp
+    destination_port: '3000'
+    comment: grafana
+  tags: jforwarder_iptables
+
+- name: Allow zipkin
+  become: true
+  ansible.builtin.iptables:
+    action: insert
+    chain: DOCKER-USER
+    jump: ACCEPT
+    in_interface: "{{ ansible_default_ipv4.interface }}"
+    protocol: tcp
+    destination_port: '9411'
+    comment: zipkin
+  tags: jforwarder_iptables
+
+
+- name: Allow prometheus
+  become: true
+  ansible.builtin.iptables:
+    action: insert
+    chain: DOCKER-USER
+    jump: ACCEPT
+    in_interface: "{{ ansible_default_ipv4.interface }}"
+    protocol: tcp
+    destination_port: '9090'
+    comment: prometheus
+  tags: jforwarder_iptables
+
+- name: Allow kafka-ui
+  become: true
+  ansible.builtin.iptables:
+    action: insert
+    chain: DOCKER-USER
+    jump: ACCEPT
+    in_interface: "{{ ansible_default_ipv4.interface }}"
+    protocol: tcp
+    destination_port: '8080'
+    comment: kafka-ui
+  tags: jforwarder_iptables
+
+- name: Allow related and established connections
+  become: true
+  ansible.builtin.iptables:
+    action: insert
+    chain: DOCKER-USER
+    ctstate: ESTABLISHED,RELATED
+    in_interface: "{{ ansible_default_ipv4.interface }}"
+    jump: ACCEPT
+    comment: Allow related and established
+  tags: jforwarder_iptables
+
+- name: Save current state of the firewall in system file
+  become: true
+  ansible.builtin.command: netfilter-persistent save
+  notify: Restart iptables
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: jforwarder_iptables

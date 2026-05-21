@@ -1,0 +1,34 @@
+---
+- name: Remove old users
+  ipa_user: 
+   name: "{{ item.user }}"
+   state: absent
+   ipa_host: idm1.linux.whatever.local
+   ipa_user: admin
+   ipa_pass: "{{ lookup('env','IPAADMIN_PASSWORD') }}"
+  with_items: "{{ users }}" 
+  when: item.state != "present"
+  tags:
+  - ipa-users
+  - ipa-users-remove
+
+- name: Add users 
+  ipa_user:
+   name: "{{ item.user }}"
+   title: "{{ item.comment }}"
+   displayname: "{{ item.fn+' '+item.ln }}"
+   givenname: "{{ item.fn }}"
+   sn: "{{ item.ln }}"
+   mail: "{{ item.user+'@whatever.ru' }}"
+   state: present
+   sshpubkey: "{{ lookup('file', './public_keys/'+item.user+'.pub') }}"
+   ipa_host: idm1.linux.whatever.local
+   ipa_user: admin
+   ipa_pass: "{{ lookup('env','IPAADMIN_PASSWORD') }}"
+  when: item.state == "present"
+  loop: "{{ users }}"
+  ignore_errors: true
+  tags:
+  - ipa-users
+  - ipa-users-add
+

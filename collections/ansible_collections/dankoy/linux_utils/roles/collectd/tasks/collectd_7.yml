@@ -1,0 +1,40 @@
+---
+
+- name: collectd | Install collectd package
+  ansible.builtin.dnf: name=collectd state=present
+  tags: collectd
+
+- name: collectd | enable collectd service
+  ansible.builtin.service:
+     name=collectd
+     state=started
+     enabled=yes
+  tags: collectd
+
+- name: collectd | write main config file
+  ansible.builtin.template: src=collectd.conf.j2 dest=/etc/collectd.conf owner=root group=root mode=0644
+  notify: restart collectd
+  tags: collectd
+
+- name: collectd | rsyslog configure.
+  ansible.builtin.copy: src=collectd.conf dest=/etc/rsyslog.d/collectd.conf
+  notify: Restart rsyslog
+  tags: collectd
+
+- name: collectd | logrotate configure
+  ansible.builtin.template:
+     src=collectd.logrotate.j2
+     dest=/etc/logrotate.d/collectd
+     owner=root
+     group=root
+     mode=0644
+  tags: collectd
+
+- name: collectd | create config plugins /etc/collectd.d
+  file:
+     name="{{ collectd_etc_plugins }}"
+     state=directory
+     owner=root
+     group=root
+     mode=0755
+  tags: collectd

@@ -1,0 +1,28 @@
+#!/bin/bash
+#MASTER_HOST=$(redis-cli -h 127.0.0.1 -p 26379 sentinel get-master-addr-by-name mymaster)
+
+
+MASTER_SENTINEL=$(redis-cli -h 127.0.0.1 -p 26379 sentinel master mymaster)
+MASTER_PARSED=$(echo $MASTER_SENTINEL | awk '{print $2, $4, $6, $9, $10, $11, $12}')
+SLAVES=$(redis-cli -h 127.0.0.1 -p 26379 sentinel slaves mymaster)
+SLAVES_PARSED=$(echo $SLAVES | tr ' ' '\n' | grep -m 10 -A1 'name\|flags\|master-link-status\|master-host' )
+SLAVE1=$(echo $SLAVES_PARSED | awk '{print $1, $2, $4, $5, $7, $8, $9, $10}')
+SLAVE2=$(echo $SLAVES_PARSED | awk '{print $12, $13, $15, $16, $18, $19, $20, $21}')
+
+
+if (echo $MASTER_PARSED | grep 's_down\|o_down\|disconnected' > /dev/null) ; then
+        printf "CRITICAL: Master is dead: $MASTER_PARSED\nSLAVE1: $SLAVE1\nSLAVE2: $SLAVE2\n"
+        exit 2
+elif (echo $SLAVE1 | grep 's_down\|o_down\|disconnected' > /dev/null) && (echo $SLAVE2 | grep 's_down\|o_down\|disconnected' > /dev/null) ; then
+        printf "CRITICAL: Both slaves are down:\nSLAVE1: $SLAVE1\nSLAVE2: $SLAVE2\nMASTER: $MASTER_PARSED\n"
+        exit 2
+elif (echo $SLAVE1 | grep 's_down\|o_down\|disconnected' > /dev/null) ; then
+        printf "WARNING: SLAVE1 is down: $SLAVE1\nMASTER: $MASTER_PARSED\nSLAVE2: $SLAVE2\n"
+        exit 1
+elif (echo $SLAVE2 | grep 's_down\|o_down\|disconnected' > /dev/null) ; then
+        printf "WARNING: SLAVE2 is down: $SLAVE2\nMASTER: $MASTER_PARSED\nSLAVE2: $SLAVE1\n"
+        exit 1
+else
+        printf "Sentinel Cluster OK:\nMASTER: $MASTER_PARSED\nSLAVE1: $SLAVE1\nSLAVE2: $SLAVE2\n"
+        exit 0
+fi

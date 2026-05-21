@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: nagios_s3_services_client }

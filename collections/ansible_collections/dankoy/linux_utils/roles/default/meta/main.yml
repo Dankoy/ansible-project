@@ -1,0 +1,9 @@
+---
+
+dependencies:
+  - role: packages
+  - role: timezone
+  - role: locale
+  - role: users
+  - role: update
+  - role: ssh

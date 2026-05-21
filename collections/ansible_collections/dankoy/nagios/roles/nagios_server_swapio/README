@@ -1,0 +1,15 @@
+Роль ставит на мониторинг swap in/out.
+
+Команда, вызываемая nagios: 
+check_swapio -d $ARG1$ -w $ARG2$ -c $ARG3$ -e $ARG4$ -v $ARG5$
+
+Опции:
+   -d Duration in seconds to monitor for swap activity (not optional) - устанавливается 1 секунда, для простоты расчета.
+   -w Warning Level for Swap Out (not optional)
+   -c Critical Level for Swap Out (not optional)
+   -e Warning Level for Swap In (not optional)
+   -v Critical Level for Swap In (not optional)
+
+
+Реализовал: Зеленин
+Проверил: Зеленин

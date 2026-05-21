@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+
+group collectd {
+    memory {
+        memory.limit_in_bytes = {{ collectd_cgroup_memory_limit }};
+    }
+}
+

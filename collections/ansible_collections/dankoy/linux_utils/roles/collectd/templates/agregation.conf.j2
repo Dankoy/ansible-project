@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+LoadPlugin aggregation
+
+<Plugin "aggregation">
+  <Aggregation>
+    Plugin "cpu"
+    Type "cpu"
+    GroupBy "Host"
+    GroupBy "TypeInstance"
+    CalculateSum true
+    CalculateAverage true
+  </Aggregation>
+</Plugin>

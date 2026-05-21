@@ -1,0 +1,44 @@
+---
+
+- ansible.builtin.include_tasks: "collectd_main.yml"
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6")
+  tags: collectd
+
+- ansible.builtin.include_tasks: "collectd_7.yml"
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") 
+  tags: collectd
+
+- ansible.builtin.include_tasks: "collectd_plugins.yml"
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
+  tags: collectd
+
+- ansible.builtin.include_tasks: "collectd_default_plugins.yml"
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
+  tags: collectd
+
+- ansible.builtin.include_tasks: "collectd_extra_plugins.yml"
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
+  tags: collectd
+  
+#- name: restart collectd
+#  ansible.builtin.service: name=collectd state=restarted
+#  tags: collectd_restart

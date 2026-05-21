@@ -1,0 +1,45 @@
+#!/bin/bash
+# {{ ansible_managed }}
+source /root/.s3.creds
+
+format_time() {
+  ((h=$1/3600))
+  ((m=($1%3600)/60))
+  ((s=$1%60))
+  printf "%02d:%02d:%02d\n" $h $m $s
+}
+
+backup_all() {
+    restic --verbose backup --tag=redis /var/lib/redis/
+}
+forget() {
+    restic forget --verbose --group-by tags --keep-last 3 --keep-daily 7 --keep-weekly 4 --keep-monthly 4 --prune
+}
+
+info() { printf "\n%s %s\n\n" "$( date )" "$*" >&2; }
+trap 'echo $( date ) Backup interrupted >&2; exit 2' INT TERM
+
+info "Starting backup"
+set -o pipefail
+
+backup_all
+backup_exit=$?
+
+info "Pruning repository"
+forget
+prune_exit=$?
+
+# use highest exit code as global exit code
+global_exit=$(( backup_exit > prune_exit ? backup_exit : prune_exit ))
+
+if [ ${global_exit} -eq 0 ]; then
+    info "Backup and Prune finished successfully"
+elif [ ${global_exit} -eq 1 ]; then
+    info "Backup and/or Prune finished with warnings"
+else
+    info "Backup and/or Prune finished with errors"
+fi
+
+printf "Elapsed time: $(format_time $SECONDS)\n"
+info "Stopping backup"
+exit ${global_exit}

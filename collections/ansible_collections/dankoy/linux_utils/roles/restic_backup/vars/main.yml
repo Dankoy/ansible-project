@@ -1,0 +1,27 @@
+---
+
+systemd_pwd: "/etc/systemd/system"
+backup_script_pwd: "/usr/local/sbin"
+logrotate_pwd: "/etc/logrotate.d"
+cron_weekly_pwd: "/etc/cron.weekly"
+rsyslog_pwd: "/etc/rsyslog.d"
+s3_endpoint: "s3:https://s3.whatever.ru/"
+
+backup_one_db: |
+  for i in $DB; do
+    backup_db
+    rc=$?
+    exit_code=$(( $exit_code + $rc ))
+  done
+  backup_exit=$exit_code  
+  
+backup_all: |
+  backup_all
+  backup_exit=$?
+  
+backup_roles: |
+  backup_roles
+  backup_exit=$?
+  exit_code=0
+   
+

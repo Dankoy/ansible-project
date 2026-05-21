@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+LoadPlugin apache
+
+<Plugin apache>
+  <Instance "local">
+    URL "http://localhost:{{ apache_port }}/server-status?auto"
+  </Instance>
+</Plugin>

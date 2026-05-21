@@ -1,0 +1,76 @@
+---
+
+- name: Role nagios_client | Remove old NRPE
+  ansible.builtin.dnf:
+    state: absent
+    name: nrpe-extended
+  tags:
+    - nagios
+    - nagios_client
+
+- name: Role nagios_client | Install NRPE and plugins
+  ansible.builtin.dnf:
+    name: ['nrpe', 'nagios-plugins', 'bc', 'sysstat', 'nagios-plugins-disk', 'nagios-plugins-load', 'nagios-plugins-swap']
+    state: present
+  tags:
+    - nagios
+    - nagios_client
+
+- name: Role nagios_client | Copy non-pkged checks
+  ansible.builtin.copy:
+    src: {{ item }}
+    dest: {{ nagios_plugins_directory }}
+    owner: root
+    group: root
+    mode: "0755"
+  with_fileglob:
+    - checks/*
+  tags:
+    - nagios
+    - nagios_client
+
+- name: Role nagios_client | configuration
+  ansible.builtin.template: src=nrpe.j2  dest=/etc/nagios/nrpe.cfg owner=root mode=0644'
+  notify:
+    - Restart nrpe
+  tags:
+    - nagios
+    - nagios_client
+    - nagios_client-config
+
+- name: Role nagios_client | start and add in autostart nrpe
+  ansible.builtin.service: name=nrpe state=started enabled=yes
+  tags:
+    - nagios
+    - nagios_client
+
+#- name: Role nagios_client | Get iptables rules
+#  shell: /sbin/iptables -L -vn
+#  register: iptablesrules
+#  always_run: yes
+#  changed_when: false  # Never report as changed
+#  tags: 
+#    - nagios
+#    - nagios_client
+
+#- name: Role nagios_client. | Add iptable rule
+#  shell: /sbin/iptables -I INPUT 1 -s {{ nagios_ip }} -p tcp --dport 5666 -j ACCEPT -m comment --comment "nrpe" && service iptables save
+#  when: iptablesrules.stdout.find("/* nrpe */") == -1
+#  tags: 
+#    - nagios
+#    - nagios_client
+
+#- name: Role nagios_client. | Add iptable rule
+#  iptables: chain=INPUT source={{ nagios_ip }} protocol=tcp destination_port=5666 comment=nrpe jump=ACCEPT action=insert
+#  tags:
+#    - nagios
+#    - nagios_client
+#    - nagios_client-iptables
+#
+#- name: Role nagios_client. | Save iptable rule
+#  shell: service iptables save
+#  ##warn: False
+#  tags:
+#    - nagios
+#    - nagios_client
+#    - nagios_client-iptables

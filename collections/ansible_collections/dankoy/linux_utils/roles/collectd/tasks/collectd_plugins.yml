@@ -1,0 +1,59 @@
+---
+
+- name: collectd | install disk plugin
+  ansible.builtin.dnf: 
+     name=collectd-disk
+     state=present
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6" and "disk" in default_plugins) or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "6" and "disk" in default_plugins)
+  tags: collectd
+
+- name: collectd | install mysql plugin
+  ansible.builtin.dnf:
+     name=collectd-mysql
+     state=present
+  when: ("mysql" in collectd_extra_plugins)
+  tags: collectd
+
+- name: collectd | install memcache plugin
+  ansible.builtin.dnf: 
+    name=collectd-memcachec
+    state=present
+  when: ("memcache" in collectd_extra_plugins)
+  tags: collectd
+
+- name: collectd | install varnish plugin
+  ansible.builtin.dnf: 
+    name=collectd-varnish 
+    state=present
+  when: ("varnish" in collectd_extra_plugins)
+  tags: collectd
+
+- name: collectd | install nginx plugin
+  ansible.builtin.dnf: 
+     name=collectd-nginx 
+     state=present
+  when: ("nginx" in collectd_extra_plugins)
+  tags: collectd
+
+- name: collectd | install apache plugin
+  ansible.builtin.dnf:
+     name=collectd-apache
+     state=present
+  when: ("apache_status" in collectd_extra_plugins)
+  tags: collectd
+
+- name: collectd | install redis plugin
+  ansible.builtin.dnf:
+     name=collectd-redis
+     state=present
+  when: ("redis" in collectd_extra_plugins)
+  tags: collectd
+
+- name: collectd | install postgresql plugin
+  ansible.builtin.dnf:
+     name=collectd-postgresql
+     state=present
+  when: ("postgresql" in collectd_extra_plugins)
+  tags: collectd
+

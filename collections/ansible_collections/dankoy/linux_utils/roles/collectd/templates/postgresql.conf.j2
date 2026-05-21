@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+
+LoadPlugin postgresql
+
+
+<Plugin "postgresql">
+    <Database "postgres">
+{% for item in collectd_postgresql %}
+        User "{{ item.user }}"
+{% endfor %}
+
+	#Query list
+	Query backends
+	Query connections
+	Query transactions
+	Query queries
+	Query query_plans
+	Query table_states
+	Query disk_io
+	Query disk_usage
+    </Database>
+</Plugin>

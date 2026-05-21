@@ -1,0 +1,58 @@
+---
+
+- name: Add iptables rule for TCP ports in vars master
+  iptables:
+    action: insert
+    rule_num: 3
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+  with_items: "{{ master_ports }}"
+  when: "'master' in inventory_hostname"
+  register: ipt_master
+  tags: kuber-deploy
+  
+- name: Add iptables rule for TCP ports in vars worker
+  iptables:
+    action: insert
+    rule_num: 3
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+  with_items: "{{ worker_ports }}"
+  when: "'worker' in inventory_hostname"
+  register: ipt_worker
+  tags: kuber-deploy
+
+- name: Add iptables rule for TCP ports in vars flannel on every node
+  iptables:
+    action: insert
+    rule_num: 3
+    chain: INPUT
+    protocol: udp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+  with_items: "{{ flannel_ports }}"
+  when: ("flannel" in cni)
+  register: ipt_flannel
+  tags: kuber-deploy
+  
+- name: Add iptables rule for TCP ports in vars calico on every node
+  iptables:
+    action: insert
+    rule_num: 3
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+  with_items: "{{ calico_ports }}"
+  when: ("calico" in cni)
+  register: ipt_calico
+  tags: kuber-deploy 
+  
+- name: iptables save
+  command: /sbin/service iptables save
+  when: (ipt_master.changed) or (ipt_worker.changed) or (ipt_flannel.changed) or (ipt_calico.changed)
+  tags: kuber-deploy

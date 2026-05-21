@@ -1,0 +1,21 @@
+Роль настраивает хост на использование IPA аутентификации и авторизации через IDM.
+По сути выполняется команда ipa-client-install --mkhomedir --enable-dns-updates
+Сервера IDM: idm.linux.whatever.local, idm2.linux.whatever.local
+Исходники роли - https://github.com/freeipa/ansible-freeipa
+
+Как пользоваться:
+1) ВМ должна находится в облаке внутренней виртуализации - https://vcd.whatever.local/cloud/org/linux/
+2) Сеть в облаке - linux-917
+3) Хостнэйм у ВМ должен обязательно содержать в себе linux.whatever.local. Например, host1.linux.whatever.local. Команда hostname -f  должна выдавать host1.linux.whatever.local. То есть никаких задваиваний доменного имени, для этого править /etc/hosts.
+4) В resolv.conf должно быть следующее:
+    nameserver	172.16.4.11
+    nameserver	172.16.4.12
+5) В .bashrc добавить переменную IPAADMIN_PASSWORD=парольадминаidm. Так же можно временно добавить переменную через export.
+6) В конфиге ансиблы - .ansible.cfg добавить строчку "module_utils = $ANSIBLE_HOME/module_utils" в директиву [default]. Пример смотреть в шаблоне конфига в репе.
+6) В group_vars объявить переменную ipaclient_mkhomedir: "yes". Странная особенность этой роли, в том, что хомяки будут создаваться только после ребута ВМ.
+
+
+Примечания:
+Роль ipaclient-install использует в зависимостях другие роли: ipaconf и ipa-krb5.
+В файле ipahost.py закомменчен импорт либы gssapi.
+

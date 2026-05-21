@@ -1,0 +1,51 @@
+#!/bin/bash
+
+function help {
+echo -e "\n\tUse ./check_iostat -d disk -w warning for await -c warning for await \n\t"
+	exit -1
+}
+
+
+while getopts "d:w:c:h" OPT; do
+	case $OPT in
+		"d") disk=$OPTARG;;
+		"w") warning=$OPTARG;;
+		"c") critical=$OPTARG;;
+		"h") help;;
+	esac
+done
+
+# Adjusting the warn and crit levels for await:
+crit_await=`echo $critical | cut -d, -f1`
+warn_await=`echo $warning | cut -d, -f1`
+
+# Checking parameters:
+[ ! -b "/dev/$disk" ] && echo "ERROR: Device incorrectly specified" && help
+
+( [ "$warn_await" == "" ] || \
+  [ "$crit_await" == "" ] ) &&
+	echo "ERROR: You must specify all warning and critical levels" && help
+
+all=`iostat -mdxy /dev/$disk 5 1 | grep $disk | tail -n1 | awk ' {print $4, $5, $6, $7, $8, $9, $10, $13, $14}'`
+await=`echo $all | awk '{print $7}'`
+
+#echo $await
+
+if ( [ "`echo "$await >= $crit_await" | bc`" == "1" ] ); then
+	msg="CRITICAL"
+        status=2
+else if ( [ "`echo "$await >= $warn_await" | bc`" == "1" ] ); then
+	msg="WARNING"
+        	status=1
+     else
+        msg="OK"
+        status=0
+     fi
+fi
+
+
+echo -n "${msg} await=${await}ms"
+echo $all | awk '{iops = $1 + $2 ; print(" | iops="iops"; await="$7"ms; util="$9"%; rd_ops/s="$1"; wr_ops/s="$2"; rdMB/s="$3"MB; wrMB/s="$4"MB; avgrq-sz="$5"; avgqu-sz="$6"; svctm="$8"ms")}'
+
+# Bye-Bye!
+exit $status

@@ -1,0 +1,9 @@
+--- 
+
+orange_armbian:
+  hosts:
+    192.168.1.61
+  children:
+    jforwarder:
+      hosts:
+        192.168.1.61

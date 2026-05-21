@@ -1,0 +1,28 @@
+---
+
+- name: NRPE Install perl pkg's
+  ansible.builtin.dnf:
+    name: ['perl-Redis']
+    state: present
+  tags:
+    - nagios
+    - nagios_redis
+    - nagios_client_redis
+
+- name: Copy plugin to client machine
+  ansible.builtin.copy:
+    src: check_redis
+    dest: /usr/lib64/nagios/plugins/check_redis
+    owner: root
+    mode: "0755"
+  tags:
+    - nagios
+    - nagios_redis
+    - nagios_client_redis
+
+- name: Actions if redis server configured with password
+  ansible.builtin.include_tasks: "withpass.yml"
+  tags:
+    - nagios
+    - nagios_redis
+    - nagios_client_redis

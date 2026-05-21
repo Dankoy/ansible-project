@@ -1,0 +1,15 @@
+---
+
+- name: Include for OS 7
+  ansible.builtin.include_tasks: "os-v7.yml"
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7")
+  tags: collectd_cgroup
+
+- name: Include for OS 6
+  ansible.builtin.include_tasks: "os-v6.yml"
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6")
+  tags: collectd_cgroup

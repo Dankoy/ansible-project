@@ -1,0 +1,48 @@
+######THIS FILE CONFIGURED BY ANSIBLE######
+##########DONT TOUCH BY HANDS##############
+
+define host{
+    use                     	{{ client_name }}-{{ host_template_name }}
+    host_name               	{{ inventory_hostname }}
+    alias                   	{{ inventory_hostname }}
+    check_command               check-host-alive
+}
+
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         Check FS Size
+    check_command               check_nrpe_client!check_disk!20%!10%
+}
+
+{% if nagios_big_disks is defined %}
+{% for var in nagios_big_disks %}
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         FS_{{ var.partition }}_size
+    check_command               check_nrpe_client!check_big_disks!{{ var.warning_lvl }}!{{ var.critical_lvl }}!{{ var.partition }}
+}
+{% endfor %}
+{% endif %}
+
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         swap
+    check_command               check_nrpe_client!check_swap!20%!10%
+}
+
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         CPU
+    check_command               check_nrpe!check_cpu
+}
+
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         Load Average
+    check_command               check_nrpe_client!check_load!{{ la_warning }}!{{ la_critical }}
+}

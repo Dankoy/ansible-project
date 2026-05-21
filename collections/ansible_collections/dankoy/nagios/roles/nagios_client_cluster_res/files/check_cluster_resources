@@ -1,0 +1,20 @@
+#!/bin/bash
+
+PCS=$(/usr/sbin/pcs resource show);
+PCS_STATUS=$(/usr/sbin/pcs status);
+
+if echo $PCS | grep -i stopped | grep -v disabled > /dev/null ; then
+    printf "CRITICAL: Some resources have been stopped \n $(/usr/sbin/pcs resource show | grep -i stopped)"
+    exit 2
+elif echo $PCS | grep -i stopped | grep -i disabled > /dev/null ; then
+    printf "WARNING: Some resources have been disabled \n $(/usr/sbin/pcs resource show | grep -i disabled)\n"
+    exit 1
+elif echo $PCS_STATUS | grep -i failed > /dev/null ; then
+    printf "WARNING: Failed resources and actions\n List of failed resources:\n $(/usr/sbin/pcs status | egrep -i "stopped|failed|exitreason")\n"
+    exit 1
+else
+    printf "OK:\n $PCS\n"
+    exit 0
+fi
+
+

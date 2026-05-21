@@ -1,0 +1,4 @@
+---
+
+- name: Enable actions
+  command:  rhn-actions-control --enable-all

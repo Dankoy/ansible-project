@@ -1,0 +1,31 @@
+######THIS FILE CONFIGURED BY ANSIBLE######
+##########DONT TOUCH BY HANDS##############
+
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         redis status
+    max_check_attempts          3 
+    check_command               check_nrpe!check_redis_status
+}
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         redis memory used
+    max_check_attempts          3
+    check_command               check_nrpe_client!check_redis_mem!75,85!{{ memory }}
+}
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         redis connections
+    max_check_attempts          3
+    check_command               check_nrpe_client!check_redis_connections!1000,1500
+}
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         redis replication
+    max_check_attempts          3
+    check_command               check_nrpe_client!check_redis_replica!500!1000
+}

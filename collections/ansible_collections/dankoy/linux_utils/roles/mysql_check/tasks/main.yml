@@ -1,0 +1,44 @@
+- name: Check mysql version
+  shell: echo "SHOW VARIABLES LIKE 'version_comment';" | mysql | awk -F " " '{print $2}' | grep -vi Value
+  register: mysql_installed
+  ignore_errors: true
+  tags: mysql-check
+
+#- name: print mysql out
+#  debug: 
+#    msg: "OUT= {{ ansible_hostname }} - {{ mysql_installed.stdout }}"
+#  tags: mysql-check
+
+#- name: print mysql err
+#  debug: 
+#    msg: "ERR= {{ ansible_hostname }} - {{ mysql_installed.stderr }}"
+#  tags: mysql-check
+
+#- name: save logs in local file
+#  local_action: copy content="OUT= {{ ansible_hostname }} - {{ mysql_installed.stdout }}" dest=/home/ezelenin/Documents/ansibout.log
+#  tags: mysql-check
+
+#- name: save logs in local file
+#  local_action: copy content="ERR= {{ ansible_hostname }} - {{ mysql_installed.stderr }}" dest=/home/ezelenin/Documents/ansiberr.log
+#  tags: mysql-check
+
+#- name: append logs
+#  ansible.builtin.lineinfile:
+#    dest: /home/ezelenin/Documents/ansib.log
+#    line: "{{ inventory_hostname }} ~ {{ ansible_hostname }}\n OUT= {{ mysql_installed.stdout }} \n ERR= {{ mysql_installed.stderr }}\n"
+#    insertafter: EOF
+#  delegate_to: localhost
+#  tags: mysql-check
+
+- name: append logs
+  local_action: shell echo "{{ inventory_hostname }} ~ {{ ansible_fqdn }}; OUT= {{ mysql_installed.stdout }}; ERR= {{ mysql_installed.stderr }}" >> /home/ezelenin/Documents/mysql-check/ansib.log
+  tags: mysql-check
+
+#- name: append logs
+#  local_action: shell echo "\n" >> /home/ezelenin/Documents/ansib.log
+#  run_once: true
+#  tags: mysql-check
+
+
+
+

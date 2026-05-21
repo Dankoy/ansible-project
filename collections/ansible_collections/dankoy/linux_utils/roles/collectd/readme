@@ -1,0 +1,150 @@
+Установка и распространение репозитория и файлов конфигурации collectd
+
+Документация:
+
+ОБЯЗАТЕЛЬНО! В конце файла конфига плагина обязательно должен быть перенос строки ( пустая строка ).
+
+Переменные переопределяемые в host_vars или group_vars
+        - collectd_extra_plugins
+            содержит список плагинов которые будут установлены на клиенте.
+        - graphite_domain
+            строка, домен в обратной записи. Вконце точку ставить не нужно. Т.к. она добваляется в задаче
+            пример: balancer.example.com - переменная graphite_domain будет иметь значение : com.example
+                    hos1.balancer.example.com - переменная graphite_domain будет иметь значение : com.example.balancer
+
+Список плагинов который не требует установки дополнительных пакетов и устанавливается по умолчанию
+    agregation
+    cpu
+    df
+    interface
+    load
+    memory
+    swap
+    vmem
+    write_graphite
+
+Список пакетов собранных для collectd 5.5 :
+    collectd-5.5.0-1.el6.x86_64.rpm
+    collectd-amqp-5.5.0-1.el6.x86_64.rpm
+    collectd-apache-5.5.0-1.el6.x86_64.rpm
+    collectd-ascent-5.5.0-1.el6.x86_64.rpm
+    collectd-bind-5.5.0-1.el6.x86_64.rpm
+    collectd-ceph-5.5.0-1.el6.x86_64.rpm
+    collectd-collection3-5.5.0-1.el6.x86_64.rpm
+    collectd-contrib-5.5.0-1.el6.x86_64.rpm
+    collectd-curl-5.5.0-1.el6.x86_64.rpm
+    collectd-curl_json-5.5.0-1.el6.x86_64.rpm
+    collectd-curl_xml-5.5.0-1.el6.x86_64.rpm
+    collectd-dbi-5.5.0-1.el6.x86_64.rpm
+    collectd-debuginfo-5.5.0-1.el6.x86_64.rpm
+    collectd-disk-5.5.0-1.el6.x86_64.rpm
+    collectd-dns-5.5.0-1.el6.x86_64.rpm
+    collectd-email-5.5.0-1.el6.x86_64.rpm
+    collectd-gmond-5.5.0-1.el6.x86_64.rpm
+    collectd-hddtemp-5.5.0-1.el6.x86_64.rpm
+    collectd-ipmi-5.5.0-1.el6.x86_64.rpm
+    collectd-iptables-5.5.0-1.el6.x86_64.rpm
+    collectd-java-5.5.0-1.el6.x86_64.rpm
+    collectd-log_logstash-5.5.0-1.el6.x86_64.rpm
+    collectd-lvm-5.5.0-1.el6.x86_64.rpm
+    collectd-memcachec-5.5.0-1.el6.x86_64.rpm
+    collectd-modbus-5.5.0-1.el6.x86_64.rpm
+    collectd-mysql-5.5.0-1.el6.x86_64.rpm
+    collectd-netlink-5.5.0-1.el6.x86_64.rpm
+    collectd-nginx-5.5.0-1.el6.x86_64.rpm
+    collectd-notify_desktop-5.5.0-1.el6.x86_64.rpm
+    collectd-notify_email-5.5.0-1.el6.x86_64.rpm
+    collectd-nut-5.5.0-1.el6.x86_64.rpm
+    collectd-openldap-5.5.0-1.el6.x86_64.rpm
+    collectd-perl-5.5.0-1.el6.x86_64.rpm
+    collectd-php-collection-5.5.0-1.el6.x86_64.rpm
+    collectd-pinba-5.5.0-1.el6.x86_64.rpm
+    collectd-ping-5.5.0-1.el6.x86_64.rpm
+    collectd-postgresql-5.5.0-1.el6.x86_64.rpm
+    collectd-python-5.5.0-1.el6.x86_64.rpm
+    collectd-redis-5.5.0-1.el6.x86_64.rpm
+    collectd-rrdtool-5.5.0-1.el6.x86_64.rpm
+    collectd-sensors-5.5.0-1.el6.x86_64.rpm
+    collectd-smart-5.5.0-1.el6.x86_64.rpm
+    collectd-snmp-5.5.0-1.el6.x86_64.rpm
+    collectd-utils-5.5.0-1.el6.x86_64.rpm
+    collectd-varnish-5.5.0-1.el6.x86_64.rpm
+    collectd-virt-5.5.0-1.el6.x86_64.rpm
+    collectd-write_http-5.5.0-1.el6.x86_64.rpm
+    collectd-write_redis-5.5.0-1.el6.x86_64.rpm
+    collectd-write_riemann-5.5.0-1.el6.x86_64.rpm
+    libcollectdclient-5.5.0-1.el6.x86_64.rpm
+    libcollectdclient-devel-5.5.0-1.el6.x86_64.rpm
+
+MySQL Preconfuration:
+--------------------------------------------------------------
+1.  Give appropriate permissions
+    ("GRANT USAGE" is synonymous to "no privileges")
+
+GRANT USAGE ON *.* TO 'collectd'@'127.0.0.1' IDENTIFIED BY 'PASSWORD';
+
+2.  Данные строки необходимо вставить в файл с переменными, он располагается в директории host_vars или group_vars
+    Plugins Config
+
+collectd_mysql:
+  - user: user
+    password: password
+
+3.  Объявить о плагине MySQL в файле с переменными хоста? 
+
+collectd_extra_plugins  :
+  - mysql
+
+
+При необходимости, переменные host и остальные выносятся из жестко описанных. В данной статье описана установка плагина MySQL для CollectD при условии что MySQL установлена на локальном хосте, не в кластере. Статс кластера не мониторится. При необходимости, можете разобраться с необходимыми правами для мониторинга статуса кластера.
+Минимальный необходимый набор для работы плагина реализован и успешно проверен мною.
+
+Плагин Redis:
+Используемая переменная collectd_redis_password указывает пароль используемый для доступа к редису.
+
+
+
+
+
+Плагин postgres:
+На db сервере нужно создать из под пользователя postgres:
+
+createuser -l monitor
+
+и прописать в pg_hba.conf acl для него:
+
+local    all		monitor		trust
+
+В vars для хоста прописываем:
+
+### COLLECTD ###
+collectd_extra_plugins  :
+    - postgresql
+
+collectd_postgresql:
+  - user: monitor
+
+Что мониторит:
+The PostgreSQL plugin monitors the following metrics:
+
+    Connections (count): Number of connections to PostgreSQL.
+    Disk Usage (byte): Number of bytes currently being used on disk.
+    Commits (count/s): Number of commits per second.
+    Rollbacks (count/s): Number of rollbacks per second.
+    Heap Blocks Read Rate (count/s): Number of blocks read from the heap.
+    Heap Cache Hit Rate (count/s): Number of blocks read directly out of the cache.
+    Index Blocks Read Rate (count/s): Number of blocks read from the index.
+    Index Cache Hit Rate (count/s): Number of index blocks read directly out of the cache.
+    Toast Blocks Read Rate (count/s): Number of reads from the toast blocks.
+    Toast Cache Hit Rate (count/s): Number of toast blocks read directly out of the cache.
+    Toast Index Blocks Read Rate (count/s): Number of blocks read from the toast index.
+    Toast Index Cache Hit Rate (count/s): Number of toast index blocks read directly out of the cache.
+    Operations [delete, insert, update, heap only update] (count/s): Number of rows [deleted, inserted, updated, heap only updated] in the db.
+    Dead Tuples (count): Number of tuples that are dead in the db.
+    Live Tuples (count): Number of tuples that are live in the db.
+
+Более подробное описание метрик:
+https://github.com/signalfx/integrations/tree/master/collectd-postgresql/docs
+
+https://postgrespro.ru/docs/postgresql/11/monitoring-stats#PG-STAT-DATABASE-VIEW
+

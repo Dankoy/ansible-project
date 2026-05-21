@@ -1,0 +1,128 @@
+---
+# Check number of nodes to play
+- name: Check if cluster consist of at least 2 nodes
+  fail:
+    msg: "Cluster must have at least 2 members"
+  when: play_hosts|count() < 2
+  run_once: true
+  tags: ha_cluster
+
+# Change timezone in case if time is wrong on servers.
+- name: Set timezone to Europe/Moscow
+  timezone:
+    name: Europe/Moscow
+  tags: ha_cluster
+
+# Install cluster packages for CentOS-7, CentOS-6, OEL-6, OEL-7. For CentOS-6, OEL-6 cman will be installed in next task
+- name: Install all packages for CentOS-7, CentOS-6, OEL-7, OEL-6
+  ansible.builtin.dnf:
+    name: ["pacemaker", "pcs", "corosync"]
+    state: present
+  tags: ha_cluster
+
+# Install cman for CentOS-6 or OEL-6
+- name: Install cman for CentOS-6
+  ansible.builtin.dnf: name=cman state=present
+  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6"))
+  tags: ha_cluster
+
+# Add nodes in /etc/hosts
+- name: Add hosts to /etc/hosts
+  ansible.builtin.lineinfile:
+  args:
+    dest: "/etc/hosts"
+    regexp: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}"
+    line: "{{ hostvars[item]['ansible_' + cluster_interface]['ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}   {{ hostvars[item]['ansible_fqdn'].split('.')[0] }}"
+  with_items: "{{ play_hosts }}"
+  tags: ha_cluster
+
+# Can use jinja2 template (works properly)
+#- name: write template to /etc/hosts
+#  ansible.builtin.template:
+#   src: hosts.j2
+#   dest: /etc/hosts
+#  tags: ha_cluster
+
+# Since all standart Iptables rules are saved, then here just insert input are done above all rules
+- name: Add iptables rule UDP port 5404-5405
+  iptables:
+    action: insert
+    chain: INPUT
+    in_interface: "{{ cluster_interface }}"
+    protocol: udp
+    match: multiport
+    destination_port: 5404:5405
+    comment: cluster
+    jump: ACCEPT
+  tags: ha_cluster
+
+- name: Add iptables rule for TCP port 2224
+  iptables:
+    action: insert
+    chain: INPUT
+    in_interface: "{{ cluster_interface }}"
+    protocol: tcp
+    destination_port: 2224
+    comment: cluster
+    jump: ACCEPT
+  tags: ha_cluster
+
+- name: Save iptables rules
+  command: /sbin/service iptables save
+  tags: ha_cluster
+
+# Enable pcsd
+- name: Enable and start PCSD service
+  ansible.builtin.service:
+    name: pcsd
+    state: started
+    enabled: true
+  tags: ha_cluster
+
+# Check cluster status. If cluster is working then no manipulations with cluster are allowed
+- name: Check status of cluster
+  command: pcs cluster status
+  register: cluster_status_registered
+  ignore_errors: true
+  changed_when: False
+  tags: ha_cluster
+
+# If cluster is not working, then include tasks to create cluster user, auth, setup and start cluster. Alse stonith disables and ignores quorum.
+- name: Include cluster construction yml
+  ansible.builtin.include_tasks: "cluster_setup.yml"
+  when: (cluster_status_registered.stderr.find("cluster is not currently running on this node") and (cluster_status_registered is failed))
+  tags: ha_cluster
+
+# Enable pacemaker and corosync for CentOS-7 or OEL-7
+- name: Enable cluster services on all nodes
+  ansible.builtin.service:
+    name: {{ item }}
+    state: started
+    enabled: true
+  with_items:
+    - pacemaker
+    - corosync
+  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7"))
+  tags: ha_cluster
+
+# Enable only pacemaker for CentOS-6 or OEL-6
+- name: Enable cluster services on all nodes
+  ansible.builtin.service:
+    name: pacemaker
+    state: started
+    enabled: true
+  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6"))
+  tags: ha_cluster
+
+# Check cluster status
+- name: Check status of cluster
+  command: pcs cluster status
+  register: cluster_status_registered
+  tags: ha_cluster
+
+# Print cluster status
+- name: print debug messages
+  ansible.builtin.debug: var=cluster_status_registered
+  tags: ha_cluster
+#- meta: end_play
+#  tags: ha_cluster

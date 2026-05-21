@@ -1,0 +1,38 @@
+#!/bin/bash
+
+KEEP_DAYS=30
+CURRENT_DATE=$(date +'%Y-%m-%d_%H-%M-%S')
+
+FILE_NAME="pg_${CURRENT_DATE}.sql"
+BACKUPS_DIR=~/backups/{{ PROJECT_NAME }}/db/
+
+DB="{{ POSTGRES_CONTAINER_DB }}"
+HOST="localhost"
+USER="{{ POSTGRES_CONTAINER_USER }}"
+PORT_POD="5432"
+PORT_HOST="5432"
+STATEFUL_SET="statefulsets/subscriptions-holder-postgres-db"
+NAMESPACE="jforwarder"
+
+printf "Removing backups older than $KEEP_DAYS"
+printf "$(find $BACKUPS_DIR -type f -name '*.sql' -mtime +$KEEP_DAYS -print)\n"
+
+find $BACKUPS_DIR -type f -name '*.sql' -mtime +$KEEP_DAYS -delete
+
+printf "Starting backup for $DB db ${CURRENT_DATE}\n"
+
+kubectl -n ${NAMESPACE} port-forward ${STATEFUL_SET} ${PORT_HOST}:${PORT_POD} & JOB=$(echo $!)
+
+echo "$JOB job"
+
+sleep 10
+
+echo "pg_dump -U ${USER} -h ${HOST} -p ${PORT_HOST} -Fc -C -d ${DB} -f ${BACKUPS_DIR}${FILE_NAME}"
+pg_dump -U ${USER} -h ${HOST} -p ${PORT_HOST} -Fc -C -d ${DB} -f ${BACKUPS_DIR}${FILE_NAME}
+
+printf "Backup done\n"
+
+printf "Kill job %s" "$JOB"
+
+kill $JOB
+

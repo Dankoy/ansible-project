@@ -1,0 +1,78 @@
+# ansible.builtin.dnf: install restic repo
+- name: Add restic repo CentOS/OEL 6
+  shell: "yum-config-manager --add-repo=https://copr.fedorainfracloud.org/coprs/copart/restic/repo/epel-6/copart-restic-epel-6.repo"
+  args:
+    creates: /etc/yum.repos.d/copart-restic-epel-6.repo
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6")    
+  tags: restic-backup
+  
+- name: Add restic repo CentOS/OEL 7
+  shell: "yum-config-manager --add-repo=https://copr.fedorainfracloud.org/coprs/copart/restic/repo/epel-7/copart-restic-epel-7.repo"
+  args:
+    creates: /etc/yum.repos.d/copart-restic-epel-7.repo
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7")    
+  tags: restic-backup    
+
+# ansible.builtin.dnf: install restic
+- name: Install restic
+  ansible.builtin.dnf:
+   name: restic
+   state: present
+  when: ((ansible_distribution == "CentOS" or ansible_distribution == "OracleLinux") and
+        (ansible_distribution_major_version == "7" or ansible_distribution_major_version == "6"))
+  tags: restic-backup
+
+- name: Copy restic rsyslog file
+  ansible.builtin.copy:
+     src=rsyslog-restic.conf
+     dest="{{ rsyslog_pwd }}/restic.conf"
+     owner=root
+     group=root
+     mode=0644
+  notify:
+    - restart rsyslog
+  tags: restic-backup
+  
+- name: Copy logrotate file
+  ansible.builtin.copy:
+     src=logrotate-restic
+     dest="{{ logrotate_pwd }}/restic"
+     owner=root
+     group=root
+     mode=0644
+  tags: restic-backup
+  
+- name: Copy cron to weekly
+  ansible.builtin.copy:
+     src=logrotate-cron
+     dest="{{ cron_weekly_pwd }}/logrotate"
+     owner=root
+     group=root
+     mode=0700
+  tags: restic-backup
+  
+# Copy service and timer
+- ansible.builtin.include_tasks: systemd.yml
+  tags: restic-backup
+
+# includes
+- ansible.builtin.include_tasks: postgres.yml
+  when: ("postgres" in restic_extra_vars)
+  tags: restic-backup
+  
+- ansible.builtin.include_tasks: mysql.yml
+  when: ("mysql" in restic_extra_vars)
+  tags: restic-backup
+
+- ansible.builtin.include_tasks: redis.yml
+  when: ("redis" in restic_extra_vars)
+  tags: restic-backup
+
+- ansible.builtin.include_tasks: s3.yml
+  tags: restic-backup
+  
+- ansible.builtin.include_tasks: restic-repo-init.yml
+  tags: restic-backup
+

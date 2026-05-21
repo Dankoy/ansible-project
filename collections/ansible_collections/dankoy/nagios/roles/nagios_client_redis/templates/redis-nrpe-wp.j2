@@ -1,0 +1,5 @@
+command[check_redis_status]=/usr/lib64/nagios/plugins/check_redis -H localhost -C /etc/nrpe.d/.redis -t ping
+command[check_redis_mem]=/usr/lib64/nagios/plugins/check_redis -H localhost -C /etc/nrpe.d/.redis -m $ARG1$ -M $ARG2$ -f
+command[check_redis_connections]=/usr/lib64/nagios/plugins/check_redis -H localhost -C /etc/nrpe.d/.redis -f -a --connected_clients $ARG1$
+command[check_redis_replica]=/usr/lib64/nagios/plugins/check_redis -H localhost -C /etc/nrpe.d/.redis -f --replication_delay=WARN:$ARG1$,CRIT:$ARG2$,ABSENT:OK
+

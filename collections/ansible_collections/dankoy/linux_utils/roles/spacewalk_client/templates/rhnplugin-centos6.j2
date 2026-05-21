@@ -1,0 +1,41 @@
+# {{ ansible_managed }}
+[main]
+enabled = 1
+gpgcheck = 1
+timeout = 120
+
+# You can specify options per channel, e.g.:
+#
+#[rhel-i386-server-5]
+#enabled = 1
+#
+#[some-unsigned-custom-channel]
+#gpgcheck = 0
+
+#Disable gpgcheck for repos with key problems
+[centos6_nginx]
+gpgcheck = 0
+
+[centos6_wallarm]
+gpgcheck = 0
+
+[centos6_remi_php54]
+gpgcheck = 0
+
+[centos6_remi_php55]
+gpgcheck = 0
+
+[centos6_remi_php56]
+gpgcheck = 0
+
+[centos6_remi_php70]
+gpgcheck = 0
+
+[centos6_remi_php71]
+gpgcheck = 0
+
+[centos6_remi_php72]
+gpgcheck = 0
+
+[centos6_mysql56]
+gpgcheck = 0

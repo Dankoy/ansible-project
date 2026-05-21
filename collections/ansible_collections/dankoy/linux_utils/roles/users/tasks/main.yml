@@ -1,0 +1,50 @@
+---
+- name: Remove old users
+  become: true
+  user: name={{ item.user }} state={{ item.state }} force=no
+  with_items: "{{ users }}"
+  when: item.state != "present"
+  tags:
+  - users
+  - users_remove
+
+- name: Add users
+  become: true
+  user: name={{ item.user }} append='yes' groups={{ item.groups }} uid={{ item.uid }} state={{ item.state }} comment={{ item.comment }} shell={{ item.shell }}
+  with_items: "{{ users }}"
+  when: item.state == "present"
+  ignore_errors: true
+  tags:
+  - users
+  - users_add
+
+- name: Add users public keys
+  become: true
+  authorized_key: user={{ item.user }} key="{{ lookup('file', './public_keys/'+item.user+'.pub') }}" exclusive=yes
+  with_items: "{{ users }}"
+  when: item.state == "present"
+  ignore_errors: true
+  tags:
+  - users
+  - users_add
+
+- name: Set permision for home dirs
+  become: true
+  file: dest=/home/{{ item.user }} state=directory owner={{ item.user }} group={{ item.user }} recurse=yes
+  with_items: "{{ users }}"
+  when: item.state == "present"
+  ignore_errors: true
+  tags:
+  - users
+  - users_add
+
+- name: Copy .bashrc file of users
+  become: true
+  ansible.builtin.copy: src={{ item.user }}/.bashrc dest=/home/{{ item.user }}/.bashrc owner={{ item.user }} group={{ item.user }}
+  #ignore_errors: true
+  with_items: "{{ users }}"
+  when: (item.skel is defined) and ((item.state == "present") and (item.skel == "yes"))
+  ignore_errors: true
+  tags:
+  - users
+  - users_add

@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+
+LoadPlugin write_graphite
+
+<Plugin write_graphite>
+  <Node "">
+    Host "{{ collectd_graphite_hostname }}"
+    Port "{{ collectd_graphite_port }}"
+    Protocol "tcp"
+    Prefix "collectd.{{ graphite_domain }}."
+    StoreRates true
+    AlwaysAppendDS false
+    EscapeCharacter "_"
+  </Node>
+</Plugin>

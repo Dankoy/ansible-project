@@ -1,0 +1,17 @@
+---
+
+- name: get token on master
+  command: kubeadm token create --print-join-command
+  register: tokens
+  when: (init.changed) and ("'master' in inventory_hostname")
+  tags: kuber-deploy
+  
+- set_fact:
+    token_command: "{{ tokens.stdout }}"
+  when: "'master' in inventory_hostname"
+  tags: kuber-deploy
+  
+- name: register worker  
+  command: "{{ hostvars[groups['cluster-test-master'][0]]['token_command'] }}"
+  when: "'worker' in inventory_hostname"
+  tags: kuber-deploy 

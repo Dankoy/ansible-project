@@ -1,0 +1,13 @@
+---
+
+- name: Copy nagios host cfg
+  ansible.builtin.template:
+    src: redis.j2
+    dest: "{{ nagios_cfg_dest }}/{{ client_name }}/{{ inventory_hostname }}-redis.cfg"
+    owner: root
+    mode: "0644"
+  delegate_to: "{{ nagios_ost2_ip }}"
+  tags:
+    - nagios
+    - nagios_redis
+    - nagios_server_redis

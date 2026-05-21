@@ -1,0 +1,23 @@
+- name: NRPE copy redis secret
+  ansible.builtin.template:
+    src: .redis.j2
+    dest: /etc/nrpe.d/.redis
+    owner: nrpe
+    mode: "0600"
+  tags:
+    - nagios
+    - nagios_redis
+    - nagios_client_redis
+
+- name: NRPE redis configuration
+  ansible.builtin.template:
+    src: redis-nrpe-wp.j2
+    dest: /etc/nrpe.d/check_redis.cfg
+    owner: root
+    mode: "0644"
+  notify:
+    - Restart nrpe
+  tags:
+    - nagios
+    - nagios_redis
+    - nagios_client_redis

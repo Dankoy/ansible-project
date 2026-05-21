@@ -1,0 +1,8 @@
+Предоставление повышения привелегий для группы wheel
+Используется файл /etc/sudoers.d/<groupname> и проверка инклуда в /etc/sudoers
+
+changelog:
+1.1 Добавлен массив групп
+
+sudoers:
+ - wheel

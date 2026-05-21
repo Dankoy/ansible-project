@@ -1,0 +1,11 @@
+---
+
+- name: Restart cgred
+  ansible.builtin.service:
+    name: cgred
+    state: restarted
+
+- name: Restart cgconfig
+  ansible.builtin.service:
+    name: cgconfig
+    state: restarted

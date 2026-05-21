@@ -1,0 +1,10 @@
+{{ ansible_managed }}
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+
+
+{% for item in ansible_play_batch %}
+{% set short_name = item.split('.') %}
+{% if ansible_cluster_interface %}
+{{ hostvars[item]["ansible_" + cluster_interface]["ipv4"]["address"] }}       {{ hostvars[item]['ansible_fqdn'] }}      {{ short_name[0] }}
+{% endif %}
+{% endfor %}

@@ -1,0 +1,13 @@
+---
+
+- name: Copy nagios host cfg
+  ansible.builtin.template:
+    src: check_services.j2
+    dest: "{{ nagios_cfg_dest }}/{{ client_name }}/{{ inventory_hostname }}-services.cfg"
+    owner: root
+    mode: "0644"
+  delegate_to: "{{ nagios_ost1_ip }}"
+  tags:
+    - nagios
+    - nagios_s3_services
+    - nagios_s3_services_server

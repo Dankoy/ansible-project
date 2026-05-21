@@ -1,0 +1,12 @@
+#!/bin/bash
+total_mem=`grep MemTotal /proc/meminfo | awk '{print $2/1024}'`
+virt_swap=`vmware-toolbox-cmd stat swap | awk '{print $1}'`
+
+if [[ $virt_swap == "0" ]]; then
+    echo "OK - ${virt_swap}MB | 'vmswap'=${virt_swap}MB;1MB;;0MB;${total_mem}MB"
+    exit 0
+else
+    echo "WARNING - ${virt_swap}MB (Сервер в swap виртуализации) | 'vmswap'=${virt_swap}MB;1MB;;0MB;${total_mem}MB"
+    exit 1
+fi
+

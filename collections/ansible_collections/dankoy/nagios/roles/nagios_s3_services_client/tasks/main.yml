@@ -1,0 +1,25 @@
+---
+
+- name: Copy plugin to client machine
+  ansible.builtin.copy:
+    src: check_service.sh
+    dest: /usr/lib64/nagios/plugins/check_service.sh
+    owner: root
+    mode: "0755"
+  tags:
+    - nagios
+    - nagios_s3_services
+    - nagios_s3_services_client
+
+- name: Copy command cfg
+  ansible.builtin.template:
+    src: check_service.j2
+    dest: /etc/nrpe.d/check_service.cfg
+    owner: root
+    mode: "0644"
+  notify:
+    - Restart nrpe
+  tags:
+    - nagios
+    - nagios_s3_services
+    - nagios_s3_services_client

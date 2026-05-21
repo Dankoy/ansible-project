@@ -1,0 +1,14 @@
+---
+
+- name: kubeadm init --pod-network-cidr=10.244.0.0/16 FLANNEL
+  command: kubeadm init --pod-network-cidr=10.244.0.0/16
+  when: "'master' in inventory_hostname"
+  register: init
+  tags: kuber-deploy
+  
+- name: kubectl apply flannel network
+  command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  when: "'master' in inventory_hostname"
+  tags: kuber-deploy
+  
+

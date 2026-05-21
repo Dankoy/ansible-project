@@ -1,0 +1,33 @@
+- name: install spacewalk repository from URL on centos-7
+  ansible.builtin.dnf: name=https://copr-be.cloud.fedoraproject.org/results/%40spacewalkproject/spacewalk-2.9-client/epel-7-x86_64/00830558-spacewalk-repo/spacewalk-client-repo-2.9-4.el7.noarch.rpm state=present
+  when: ansible_distribution == "CentOS"
+  tags: spacewalk-client
+
+- name: Install all packages for client
+  ansible.builtin.dnf:
+    name: [rhn-client-tools, rhn-check, rhn-setup, rhnsd, m2crypto, yum-rhn-plugin, rhncfg, rhncfg-actions, rhncfg-client]
+    state: present
+  tags: spacewalk-client
+
+- name: Enable configuration management and remote command
+  command:  rhn-actions-control --enable-all
+  tags: spacewalk-client
+  
+- name: Copy certificate in /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT
+  ansible.builtin.copy: src=RHN-ORG-TRUSTED-SSL-CERT dest=/usr/share/rhn/ owner=root group=root mode=0644
+  tags: spacewalk-client
+  
+- name: Install Spacewalk CA certificate from server
+  ansible.builtin.dnf:
+    name: "http://{{ spacewalk_server }}/pub/rhn-org-trusted-ssl-cert-1.0-2.noarch.rpm"
+    state: present
+  tags: spacewalk-client
+
+- name: register with Spacewalk
+  command: /usr/sbin/rhnreg_ks --serverUrl=https://{{ spacewalk_server }}/XMLRPC --activationkey={{ CentOS7_activation_key }}
+  when: spw_registered is failed
+  tags: spacewalk-client
+
+- name: enable rhnsd service
+  ansible.builtin.service: name=rhnsd state=started enabled=true
+  tags: spacewalk-client

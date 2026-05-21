@@ -1,0 +1,12 @@
+---
+
+- name: Restart collectd
+  ansible.builtin.service:
+    name: collectd
+    state: restarted
+
+# handler for syslog
+- name: Restart rsyslog
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted

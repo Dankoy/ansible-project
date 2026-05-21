@@ -1,0 +1,9 @@
+# Place file in
+# /etc/NetworkManager/conf.d/90-disable-randomization.conf
+[device-mac-randomization]
+# "yes" is the default for scanning in Fedora 25
+wifi.scan-rand-mac-address=no
+
+[connection-mac-randomization]
+ethernet.cloned-mac-address={{ mac }}
+wifi.cloned-mac-address={{ mac }}

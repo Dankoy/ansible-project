@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Johan Gunnarsson
+  description: Install collectd client
+  company: Gujops
+  license: MIT
+  
+  platforms:
+    - name: EL
+      versions:
+        - 6
+    - name: Debian
+      versions:
+        - 7
+    - name: Ubuntu
+      versions:
+        - trusty
+        
+  categories:
+    - monitoring

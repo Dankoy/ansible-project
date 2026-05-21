@@ -1,0 +1,7 @@
+---
+# restart network
+- name: restart network
+  become: true
+  systemd:
+    name: networking
+  tags: restrict-mac-randomization

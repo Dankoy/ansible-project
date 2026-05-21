@@ -1,0 +1,3 @@
+---
+
+nagios_client_restic_nrpe_sudo: "nrpe ALL=NOPASSWD: /usr/lib64/nagios/plugins/check_restic.sh *"

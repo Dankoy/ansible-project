@@ -1,0 +1,10 @@
+---
+# handlers restart iptables
+
+- name: Restart iptables
+  become: true
+  systemd:
+    name: iptables
+    state: restarted
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+

@@ -1,0 +1,11 @@
+######THIS FILE CONFIGURED BY ANSIBLE######
+##########DONT TOUCH BY HANDS##############
+
+define service{
+    use                         {{ client_name }}-{{ service_template_name }}
+    host_name                   {{ inventory_hostname }}
+    service_description         SwapIO
+    check_command               check_nrpe_client!check_swapio!1!1!1!1!1000
+}
+
+

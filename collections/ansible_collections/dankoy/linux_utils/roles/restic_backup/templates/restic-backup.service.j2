@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Backup with restic to s3
+
+[Service]
+Type=simple
+Nice=10
+User=root
+SyslogIdentifier=Restic_backup_s3
+ExecStart=/usr/local/sbin/restic-backup.sh
+# $HOME or $XDG_CACHE_HOME must be set for restic to find /root/.cache/restic/
+Environment="HOME=/root"

@@ -1,0 +1,21 @@
+- name: Copy nagios host cfg
+  ansible.builtin.template:
+    src: os.j2
+    dest: "{{ nagios_cfg_dest }}/{{ client_name }}/{{ inventory_hostname }}-os.cfg"
+    owner: root
+    mode: "0644"
+  delegate_to: "{{ nagios_ost2_ip }}"
+  tags:
+    - nagios
+    - nagios_server
+
+- name: Copy nagios hostgroup cfg
+  ansible.builtin.template:
+    src: hostgroup.j2
+    dest: "{{ nagios_cfg_dest }}/{{ client_name }}/{{ client_name }}-hostgroup.cfg"
+    owner: root
+    mode: "0644"
+  delegate_to: "{{ nagios_ost2_ip }}"
+  tags:
+    - nagios
+    - nagios_server

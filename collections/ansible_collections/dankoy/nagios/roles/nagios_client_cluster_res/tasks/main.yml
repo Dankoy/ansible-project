@@ -1,0 +1,36 @@
+---
+
+- name: Copy plugin to client machine
+  ansible.builtin.copy:
+    src: check_cluster_resources
+    dest: /usr/lib64/nagios/plugins/check_cluster_resources
+    owner: root
+    mode: "0755"
+  tags:
+    - nagios
+    - nagios_cluster_res
+    - nagios_client_cluster_res
+
+- name: NRPE Accept nrep user for SUDO without password
+  ansible.builtin.copy:
+    src: nrpe
+    dest: /etc/sudoers.d/nrpe-cluster-resource
+    owner: root
+    mode: "0644"
+  tags:
+    - nagios
+    - nagios_cluster_res
+    - nagios_client_cluster_res
+
+- name: Copy command cfg
+  ansible.builtin.template:
+    src: cluster_resources.j2
+    dest: /etc/nrpe.d/cluster_resources.cfg
+    owner: root
+    mode: "0644"
+  notify:
+    - Restart nrpe
+  tags:
+    - nagios
+    - nagios_cluster_res
+    - nagios_client_cluster_res

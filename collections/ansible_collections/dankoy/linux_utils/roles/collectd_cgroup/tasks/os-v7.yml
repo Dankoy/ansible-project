@@ -1,0 +1,46 @@
+---
+
+- name: Role collectd_cgroup | Install libcgroup package
+  ansible.builtin.dnf:
+    name: libcgroup
+    state: present
+  tags: collectd_cgroup
+
+- name: Role collectd_cgroup | Install libcgroup-tools package
+  ansible.builtin.dnf:
+    name:
+      - libcgroup-tools
+    state: present
+  tags: collectd_cgroup
+
+- name: Role collectd_cgroup | cgconfig configure
+  ansible.builtin.template:
+    src: collectd.conf.j2
+    dest: /etc/cgconfig.d/collectd.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart cgconfig
+  tags: collectd_cgroup
+
+- name: Role collectd_cgroup | cgconfig configure
+  ansible.builtin.lineinfile:
+    dest: /etc/cgrules.conf
+    regexp: ^root:collectd
+    line: 'root:collectd\tmemory\tcollectd/'
+  notify: restart cgred
+  tags: collectd_cgroup
+
+- name: Role collectd_cgroup | enable cgred service
+  ansible.builtin.service:
+    name: cgred
+    state: started
+    enabled: true
+  tags: collectd_cgroup
+
+- name: Role collectd_cgroup | enable cgconfig service
+  ansible.builtin.service:
+    name: cgconfig
+    state: started
+    enabled: true
+  tags: collectd_cgroup

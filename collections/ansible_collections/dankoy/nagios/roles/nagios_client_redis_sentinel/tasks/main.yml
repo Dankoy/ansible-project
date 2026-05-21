@@ -1,0 +1,25 @@
+---
+
+- name: Copy plugin to client machine
+  ansible.builtin.copy:
+    src: check_redis_sentinel
+    dest: /usr/lib64/nagios/plugins/check_redis_sentinel
+    owner: root
+    mode: "0755"
+  tags:
+    - nagios
+    - nagios-redis-sentinel
+    - nagios-client-redis-sentinel
+
+- name: NRPE redis configuration
+  ansible.builtin.template:
+    src: redis-sentinel.j2
+    dest: /etc/nrpe.d/check_redis_sentinel.cfg
+    owner: root
+    mode: "0644"
+  notify:
+    - Restart nrpe
+  tags:
+    - nagios
+    - nagios-redis-sentinel
+    - nagios-client-redis-sentinel

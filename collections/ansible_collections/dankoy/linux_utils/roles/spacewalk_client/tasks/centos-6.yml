@@ -1,0 +1,42 @@
+- name: install spacewalk repository from URL on centos-6
+  ansible.builtin.dnf: name=https://copr-be.cloud.fedoraproject.org/results/%40spacewalkproject/spacewalk-2.9-client/epel-6-x86_64/00830558-spacewalk-repo/spacewalk-client-repo-2.9-4.el6.noarch.rpm state=present
+  when: ansible_distribution == "CentOS"
+  tags: spacewalk-client
+
+- name: Install all packages for client
+  ansible.builtin.dnf:
+    name: [rhn-client-tools, rhn-check, rhn-setup, rhnsd, m2crypto, yum-rhn-plugin, rhncfg, rhncfg-actions, rhncfg-client]
+    state: present
+  tags: spacewalk-client
+  
+- name: Enable configuration management and remote command
+  command:  rhn-actions-control --enable-all
+  tags: spacewalk-client
+
+# Проверка репозиториев. Нужно, если вообще нет сертификата на сервере - добавить его.
+- name: check for repolist
+  command: yum repolist
+  register: repolist_registered
+  ignore_errors: true
+  changed_when: False
+  tags: spacewalk-client
+  
+- ansible.builtin.include_tasks: "centos6-share-sert-err.yml"
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and 
+        (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1)
+  tags: spacewalk-client
+
+- name: Install Spacewalk CA certificate from server
+  ansible.builtin.dnf:
+    name: "http://{{ spacewalk_server }}/pub/rhn-org-trusted-ssl-cert-1.0-2.noarch.rpm"
+    state: present
+  tags: spacewalk-client
+
+- name: register with Spacewalk
+  command: /usr/sbin/rhnreg_ks --serverUrl=http://{{ spacewalk_server }}/XMLRPC --activationkey={{ CentOS6_activation_key }}
+  when: spw_registered is failed
+  tags: spacewalk-client
+
+- name: enable rhnsd service
+  ansible.builtin.service: name=rhnsd state=started enabled=true
+  tags: spacewalk-client

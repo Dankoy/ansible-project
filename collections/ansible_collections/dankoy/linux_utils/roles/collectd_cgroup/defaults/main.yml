@@ -1,0 +1,4 @@
+---
+
+# 100M
+collectd_cgroup_memory_limit: "100000000"

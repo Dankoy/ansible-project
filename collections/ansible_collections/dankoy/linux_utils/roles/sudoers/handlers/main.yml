@@ -1,0 +1,5 @@
+---
+# handlers file for sudoers
+- name: wheel permissions
+  become: true
+  action: file path=/etc/sudoers.d/wheel mode=0440 state=file owner=root group=root

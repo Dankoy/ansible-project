@@ -1,0 +1,11 @@
+- name: Check existing restic repo
+  shell: "source /root/.s3.creds && restic check"
+  register: repo
+  ignore_errors: true
+  changed_when: "'no errors were found' not in repo.stdout"
+  tags: restic-backup
+
+- name: Init new restic repo
+  shell: "source /root/.s3.creds && restic init"
+  when: repo.failed
+  tags: restic-backup
