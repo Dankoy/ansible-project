@@ -1,9 +1,10 @@
 --- 
 
-ubuntu_vb:
+virtualbox:
   hosts:
-    127.0.0.1
+    centos9:
+      ansible_host: 127.0.0.1
   children:
     jforwarder:
       hosts:
-        127.0.0.1
+        centos9:
