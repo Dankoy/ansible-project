@@ -32,7 +32,7 @@
   become: true
   ansible.posix.authorized_key:
     user: "{{ item.user }}"
-    key: "{{ lookup('file', './public_keys/' + item.user + '.pub') }}"
+    key: "{{ lookup('file', 'inventory/public_keys/' + item.user + '.pub') }}"
     exclusive: "yes"
   with_items: "{{ users }}"
   when: item.state == "present"
