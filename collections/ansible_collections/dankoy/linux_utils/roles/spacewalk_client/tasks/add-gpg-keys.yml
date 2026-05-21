@@ -1,11 +1,12 @@
+---
 - name: Add key to keychain for spacewalk-2.8
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: https://copr-be.cloud.fedoraproject.org/results/%40spacewalkproject/spacewalk-2.8-client/pubkey.gpg
   tags: spacewalk-client
 
 - name: Add key to keychain for spacewalk-2.9
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: https://copr-be.cloud.fedoraproject.org/results/%40spacewalkproject/spacewalk-2.9-client/pubkey.gpg
   tags: spacewalk-client

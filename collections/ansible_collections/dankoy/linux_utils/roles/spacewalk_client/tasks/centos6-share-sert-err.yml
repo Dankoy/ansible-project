@@ -1,8 +1,14 @@
-- name: backup old certificate
-  command: mv /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT.old
+---
+- name: Backup old certificate
+  ansible.builtin.command: mv /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT.old
   ignore_errors: true
   tags: spacewalk-client
 
-- name: copy new certificate
-  ansible.builtin.copy: src=RHN-ORG-TRUSTED-SSL-CERT dest=/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT owner=root group=root mode=0644
+- name: Copy new certificate
+  ansible.builtin.copy:
+    src: RHN-ORG-TRUSTED-SSL-CERT
+    dest: /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT
+    owner: root
+    group: root
+    mode: "0644"
   tags: spacewalk-client

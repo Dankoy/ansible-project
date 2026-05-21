@@ -1,25 +1,30 @@
+---
 - name: Install spacewalk-client repo
   ansible.builtin.dnf:
-    name: https://copr-be.cloud.fedoraproject.org/results/@spacewalkproject/spacewalk-2.9-client/epel-7-x86_64/00830558-spacewalk-repo/spacewalk-client-repo-2.9-4.el7.noarch.rpm
+    name:
+      https://copr-be.cloud.fedoraproject.org/results/@spacewalkproject/spacewalk-2.9-client/epel-7-x86_64/00830558-spacewalk-repo/spacewalk-client-repo-2.9-4.el7.noarch.rpm
     state: present
   tags: spacewalk-client
 
-- name: spacewalk-client. Install packages on OEL
-  ansible.builtin.dnf: 
-    name: [rhn-client-tools, rhn-check, rhn-setup, rhnsd, m2crypto, yum-rhn-plugin, rhncfg, rhncfg-actions, rhncfg-client] 
+- name: Spacewalk-client. Install packages on OEL
+  ansible.builtin.dnf:
+    name: [rhn-client-tools, rhn-check, rhn-setup, rhnsd, m2crypto, yum-rhn-plugin, rhncfg, rhncfg-actions, rhncfg-client]
     state: present
-#    enablerepo: ol7_spacewalk27_client
+  #    enablerepo: ol7_spacewalk27_client
   tags: spacewalk-client
 
-- name: register with Spacewalk
-  command: /usr/sbin/rhnreg_ks --serverUrl=http://{{ spacewalk_server }}/XMLRPC --activationkey={{ OEL7_activation_key }}
+- name: Register with Spacewalk
+  ansible.builtin.command: /usr/sbin/rhnreg_ks --serverUrl=http://{{ spacewalk_server }}/XMLRPC --activationkey={{ OEL7_activation_key }}
   when: spw_registered is failed
   tags: spacewalk-client
 
 - name: Enable configuration management and remote command
-  command:  rhn-actions-control --enable-all
+  ansible.builtin.command: rhn-actions-control --enable-all
   tags: spacewalk-client
 
-- name: enable rhnsd service
-  ansible.builtin.service: name=rhnsd state=started enabled=true
+- name: Enable rhnsd service
+  ansible.builtin.service:
+    name: rhnsd
+    state: started
+    enabled: "true"
   tags: spacewalk-client

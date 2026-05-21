@@ -1,17 +1,18 @@
+---
 # Отключение проверки gpg ключа для репозиториев, у которых ошибка проверки сертификата
 - name: Write in rhnplugin.conf fro CentOS6
   ansible.builtin.template:
     src: rhnplugin-centos6.j2
     dest: /etc/yum/pluginconf.d/rhnplugin.conf
-    backup: yes
+    backup: true
   when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
   tags: spacewalk-client
-  
+
 - name: Write in rhnplugin.conf fro CentOS7
   ansible.builtin.template:
     src: rhnplugin-centos7.j2
     dest: /etc/yum/pluginconf.d/rhnplugin.conf
-    backup: yes
+    backup: true
   when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
   tags: spacewalk-client
 
@@ -19,85 +20,84 @@
   ansible.builtin.template:
     src: rhnplugin-oel7.j2
     dest: /etc/yum/pluginconf.d/rhnplugin.conf
-    backup: yes
+    backup: true
   when: (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7")
   tags: spacewalk-client
 
-
-- name: check for previous registration
-  shell: /usr/sbin/rhn_check
+- name: Check for previous registration
+  ansible.builtin.command: /usr/sbin/rhn_check
   register: spw_registered
   ignore_errors: true
-  changed_when: False
+  changed_when: false
   tags: spacewalk-client
-  
+
 # Проверка репозиториев. Нужно, если вообще нет сертификата на сервере - добавить его.
-- name: check for repolist
-  command: yum repolist
+- name: Check for repolist
+  ansible.builtin.command: yum repolist
   register: repolist_registered
   ignore_errors: true
-  changed_when: False
+  changed_when: false
   tags: spacewalk-client
-  
+
 - ansible.builtin.include_tasks: "centos-6-ssl-err.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and
-        (spw_registered.stdout.find("SSL3_GET_SERVER_CERTIFICATE") != -1)
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and (spw_registered.stdout.find("SSL3_GET_SERVER_CERTIFICATE") != -1)
   tags: spacewalk-client
-  
+
 - ansible.builtin.include_tasks: "centos6-share-sert-err.yml"
-  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and 
-        (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1)) or
-        ((ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") and 
-        (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1))
+  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and
+    (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1)) or ((ansible_distribution == "OracleLinux" and
+    ansible_distribution_major_version == "7") and (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1))
   tags: spacewalk-client
-  
+
 - ansible.builtin.include_tasks: "system-id.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") and
-        (spw_registered.stdout.find("unable to read system id") != -1) and (repolist_registered.stderr.find("/etc/sysconfig/rhn/RHN-ORG-TRUSTED-SSL-CERT")) 
-        
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") and (spw_registered.stdout.find("unable to read system id") != -1) and
+    (repolist_registered.stderr.find("/etc/sysconfig/rhn/RHN-ORG-TRUSTED-SSL-CERT"))
+
 - ansible.builtin.include_tasks: "system-id.yml"
-  when: (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") and
-        (spw_registered.stdout.find("unable to read system id") != -1)
+  when: (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") and (spw_registered.stdout.find("unable to read system id") != -1)
   tags: spacewalk-client
-       
+
 - ansible.builtin.include_tasks: "oel-7.yml"
-  when: (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") and
-        (spw_registered.stderr.find("No such file or directory")) and (spw_registered is failed)
+  when: (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") and (spw_registered.stderr.find("No such file or directory")) and
+    (spw_registered is failed)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos-6.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and
-        (spw_registered.stderr.find("No such file or directory")) and (spw_registered is failed)
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and (spw_registered.stderr.find("No such file or directory")) and
+    (spw_registered is failed)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos-7.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") and
-        (spw_registered.stderr.find("No such file or directory")) and (spw_registered is failed)
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") and (spw_registered.stderr.find("No such file or directory")) and
+    (spw_registered is failed)
   tags: spacewalk-client
 
 - name: Check if host has gpg key for spacewalk-client_2.8
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: be4b0bc2
   register: has_repo_key_28
   ignore_errors: true
-  changed_when: False
+  changed_when: false
   tags: spacewalk-client
-  
+
 - name: Check if host has gpg key for spacewalk-client_2.9
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: 9bd837ba
   register: has_repo_key_29
   ignore_errors: true
-  changed_when: False
+  changed_when: false
   tags: spacewalk-client
- 
+
 - ansible.builtin.include_tasks: "add-gpg-keys.yml"
   when: (has_repo_key_28 is failed) or (has_repo_key_29 is failed)
   tags: spacewalk-client
-  
-- name: enable rhnsd service
-  ansible.builtin.service: name=rhnsd state=started enabled=true
-  changed_when: False
+
+- name: Enable rhnsd service
+  ansible.builtin.service:
+    name: rhnsd
+    state: started
+    enabled: "true"
+  changed_when: false
   tags: spacewalk-client

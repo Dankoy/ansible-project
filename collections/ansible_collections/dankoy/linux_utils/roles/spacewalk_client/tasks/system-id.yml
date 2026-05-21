@@ -1,3 +1,9 @@
-- name: copy new certificate
-  ansible.builtin.copy: src=RHN-ORG-TRUSTED-SSL-CERT dest=/usr/share/rhn/ owner=root group=root mode=0644
+---
+- name: Copy new certificate
+  ansible.builtin.copy:
+    src: RHN-ORG-TRUSTED-SSL-CERT
+    dest: /usr/share/rhn/
+    owner: root
+    group: root
+    mode: "0644"
   tags: spacewalk-client
