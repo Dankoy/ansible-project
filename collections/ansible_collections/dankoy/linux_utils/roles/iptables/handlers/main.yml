@@ -3,8 +3,7 @@
 
 - name: Restart iptables
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: iptables
     state: restarted
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
