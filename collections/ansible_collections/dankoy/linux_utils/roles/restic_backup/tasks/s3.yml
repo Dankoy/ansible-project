@@ -1,3 +1,4 @@
+---
 - name: Check if s3.creds exists
   ansible.builtin.stat:
     path: /root/.s3.creds
@@ -5,35 +6,32 @@
   tags: restic-backup
 
 - name: Import environment variable
-  become: no
+  become: false
   delegate_to: localhost
-  set_fact: 
-    aws_access_key_id: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
-    aws_secret_access_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+  ansible.builtin.set_fact:
+    aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+    aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
   no_log: true
   when: not st.stat.exists
   tags: restic-backup
 
 - name: Generate password locally
-  local_action: command pwgen 24 1 -B
+  ansible.builtin.command: pwgen 24 1 -B
+  delegate_to: localhost
   register: pass
   run_once: true
   become: false
   no_log: true
   when: not st.stat.exists
   tags: restic-backup
-  
+
 - name: Copy s3.creds
   ansible.builtin.template:
-     src=s3.creds.j2
-     dest=/root/.s3.creds
-     owner=root
-     group=root
-     mode=0600
+    src: s3.creds.j2
+    dest: /root/.s3.creds
+    owner: root
+    group: root
+    mode: "0600"
   no_log: true
   when: not st.stat.exists
   tags: restic-backup
-
-
-
-

@@ -13,15 +13,13 @@ backup_one_db: |
     rc=$?
     exit_code=$(( $exit_code + $rc ))
   done
-  backup_exit=$exit_code  
-  
+  backup_exit=$exit_code
+
 backup_all: |
   backup_all
   backup_exit=$?
-  
+
 backup_roles: |
   backup_roles
   backup_exit=$?
   exit_code=0
-   
-

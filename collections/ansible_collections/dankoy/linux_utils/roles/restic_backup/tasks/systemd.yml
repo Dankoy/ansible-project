@@ -1,35 +1,35 @@
+---
 # Copy  restic-backup.service
 - name: Copy restic-backup.service
   ansible.builtin.template:
-     src=restic-backup.service.j2
-     dest="{{ systemd_pwd }}/restic-backup.service"
-     owner=root
-     group=root
-     mode=0644
+    src: restic-backup.service.j2
+    dest: "{{ systemd_pwd }}/restic-backup.service"
+    owner: root
+    group: root
+    mode: "0644"
   register: service
   tags: restic-backup
 
 # Copy  restic-backup.timer
 - name: Copy restic-backup.timer
   ansible.builtin.template:
-     src=restic-backup.timer.j2
-     dest="{{ systemd_pwd }}/restic-backup.timer"
-     owner=root
-     group=root
-     mode=0644
+    src: restic-backup.timer.j2
+    dest: "{{ systemd_pwd }}/restic-backup.timer"
+    owner: root
+    group: root
+    mode: "0644"
   register: timer
-  tags: restic-backup 
+  tags: restic-backup
 
 - name: Reload systemd daemon
-  systemd:
-    daemon_reload: yes
+  ansible.builtin.systemd:
+    daemon_reload: true
   when: (service.changed) or (timer.changed)
   tags: restic-backup
-  
+
 - name: Start and enable restic-backup.timer
-  systemd:
+  ansible.builtin.systemd:
     name: restic-backup.timer
     state: started
-    enabled: yes
+    enabled: true
   tags: restic-backup
-  

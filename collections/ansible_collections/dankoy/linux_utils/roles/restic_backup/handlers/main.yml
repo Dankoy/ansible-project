@@ -1,7 +1,6 @@
 ---
-
-- name: restart rsyslog
-  systemd:
+- name: Restart rsyslog
+  ansible.builtin.systemd:
     name: rsyslog.service
     state: restarted
-  tags: restic-backup 
+  tags: restic-backup
