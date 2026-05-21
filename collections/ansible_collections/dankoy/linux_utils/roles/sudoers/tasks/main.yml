@@ -22,11 +22,11 @@
   become: true
   ansible.builtin.template:
     src: sudoers.d/wheel.j2
-    dest: "/etc/sudoers.d/{{ item }} "
+    dest: "/etc/sudoers.d/{{ item }}"
     owner: root
     group: root
     mode: "0440"
     backup: "no"
-  notify: wheel permissions
+  notify: Wheel permissions
   with_items: "{{ sudoers }}"
   tags: sudoers
