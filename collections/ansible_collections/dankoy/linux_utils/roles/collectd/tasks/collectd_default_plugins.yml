@@ -1,69 +1,69 @@
 ---
-- name: collectd | write sample config to  collectd.conf.orig
+- name: Collectd | write sample config to  collectd.conf.orig
   ansible.builtin.copy: src=collectd.conf.sample dest="{{collectd_etc_plugins}}/collectd.conf.sample" owner=root group=root mode=0644'
   tags: collectd
 
-- name: collectd | write config for write_graphite plugin
+- name: Collectd | write config for write_graphite plugin
   ansible.builtin.template: src=write_graphite.conf.j2 dest="{{collectd_etc_plugins}}/write_graphite.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("write_graphite" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for agregation plugin
+- name: Collectd | write config for agregation plugin
   ansible.builtin.template: src=agregation.conf.j2 dest="{{collectd_etc_plugins}}/agregation.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("agregation" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for cpu plugin
+- name: Collectd | write config for cpu plugin
   ansible.builtin.template: src=cpu.conf.j2 dest="{{collectd_etc_plugins}}/cpu.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("cpu" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for df plugin
+- name: Collectd | write config for df plugin
   ansible.builtin.template: src=df.conf.j2 dest="{{collectd_etc_plugins}}/df.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("df" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for disk plugin
+- name: Collectd | write config for disk plugin
   ansible.builtin.template: src=disk.conf.j2 dest="{{collectd_etc_plugins}}/disk.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("disk" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for interface plugin
+- name: Collectd | write config for interface plugin
   ansible.builtin.template: src=interface.conf.j2 dest="{{collectd_etc_plugins}}/interface.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("interface" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for load plugin
+- name: Collectd | write config for load plugin
   ansible.builtin.template: src=load.conf.j2 dest="{{collectd_etc_plugins}}/load.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("load" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for memory plugin
+- name: Collectd | write config for memory plugin
   ansible.builtin.template: src=memory.conf.j2 dest="{{collectd_etc_plugins}}/memory.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("memory" in "default_plugins")
   tags: collectd
 
-- name: collectd | write config for syslog plugin
+- name: Collectd | write config for syslog plugin
   ansible.builtin.template: src=syslog.conf.j2 dest="{{collectd_etc_plugins}}/syslog.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("syslog" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for swap plugin
+- name: Collectd | write config for swap plugin
   ansible.builtin.template: src=swap.conf.j2 dest="{{collectd_etc_plugins}}/swap.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("swap" in default_plugins)
   tags: collectd
 
-- name: collectd | write config for vmem plugin
+- name: Collectd | write config for vmem plugin
   ansible.builtin.template: src=vmem.conf.j2 dest="{{collectd_etc_plugins}}/vmem.conf" owner=root group=root mode=0644
   notify: restart collectd
   when: ("vmem" in default_plugins)

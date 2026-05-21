@@ -35,6 +35,6 @@
     (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
   tags: collectd
 
-#- name: restart collectd
+# - name: restart collectd
 #  ansible.builtin.service: name=collectd state=restarted
 #  tags: collectd_restart
