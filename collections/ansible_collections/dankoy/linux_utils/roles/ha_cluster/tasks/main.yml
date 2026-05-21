@@ -23,7 +23,8 @@
 # Install cman for CentOS-6 or OEL-6
 - name: Install cman for CentOS-6
   ansible.builtin.dnf: name=cman state=present
-  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6"))
+  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or (ansible_distribution == "OracleLinux" and
+    ansible_distribution_major_version == "6"))
   tags: ha_cluster
 
 # Add nodes in /etc/hosts
@@ -32,7 +33,8 @@
   args:
     dest: "/etc/hosts"
     regexp: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}"
-    line: "{{ hostvars[item]['ansible_' + cluster_interface]['ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}   {{ hostvars[item]['ansible_fqdn'].split('.')[0] }}"
+    line: "{{ hostvars[item]['ansible_' + cluster_interface]['ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}   {{ hostvars[item]['ansible_fqdn'].split('.')[0]
+      }}"
   with_items: "{{ play_hosts }}"
   tags: ha_cluster
 
@@ -84,7 +86,7 @@
   command: pcs cluster status
   register: cluster_status_registered
   ignore_errors: true
-  changed_when: False
+  changed_when: false
   tags: ha_cluster
 
 # If cluster is not working, then include tasks to create cluster user, auth, setup and start cluster. Alse stonith disables and ignores quorum.
@@ -102,7 +104,8 @@
   with_items:
     - pacemaker
     - corosync
-  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7"))
+  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or (ansible_distribution == "OracleLinux" and
+    ansible_distribution_major_version == "7"))
   tags: ha_cluster
 
 # Enable only pacemaker for CentOS-6 or OEL-6
@@ -111,7 +114,8 @@
     name: pacemaker
     state: started
     enabled: true
-  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "6"))
+  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or (ansible_distribution == "OracleLinux" and
+    ansible_distribution_major_version == "6"))
   tags: ha_cluster
 
 # Check cluster status
