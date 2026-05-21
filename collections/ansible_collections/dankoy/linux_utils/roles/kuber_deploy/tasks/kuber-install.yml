@@ -1,56 +1,54 @@
 ---
-
-- name: copy kubernetes.repo
+- name: Copy kubernetes.repo
   ansible.builtin.copy:
     src: kubernetes.repo
     dest: /etc/yum.repos.d
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   tags: kuber-deploy
-  
+
 - name: Install kubernetes for CentOS-7
   ansible.builtin.dnf:
-    name: ['kubelet', 'kubeadm', 'kubectl']
+    name: ["kubelet", "kubeadm", "kubectl"]
     disable_excludes: kubernetes
     state: present
   tags: kuber-deploy
 
 # start and enable kubelet
-- name: start and enable kubelet
-  systemd:
+- name: Start and enable kubelet
+  ansible.builtin.systemd:
     name: kubelet
     state: started
-    enabled: yes
+    enabled: true
   tags: kuber-deploy
 
-- name: check if .kube folder exists
+- name: Check if .kube folder exists
   ansible.builtin.stat:
     path: /root/.kube
   when: "'master' in inventory_hostname"
   register: stkube
   tags: kuber-deploy
-  
-- set_fact:
+
+- ansible.builtin.set_fact:
     kube_folder: "{{ stkube }}"
   when: "'master' in inventory_hostname"
   tags: kuber-deploy
-  
-- name: create folder .kube
-  file:
+
+- name: Create folder .kube
+  ansible.builtin.file:
     path: /root/.kube
     state: directory
-    mode: '0755'  
+    mode: "0755"
   when: ("'master' in inventory_hostname") and (not hostvars[groups['cluster-test-master'][0]]['kube_folder'].stat.exists)
-  ignore_errors: True
+  ignore_errors: true
   tags: kuber-deploy
-  
-- name: create symlink for admin config
-  file:
+
+- name: Create symlink for admin config
+  ansible.builtin.file:
     src: /etc/kubernetes/admin.conf
     path: /root/.kube/config
     state: link
-    force: yes
+    force: true
   when: "'master' in inventory_hostname"
   tags: kuber-deploy
-

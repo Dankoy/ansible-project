@@ -10,12 +10,12 @@ master_ports:
 worker_ports:
   - "10250"
   - "30000:32767"
-  
+
 flannel_ports:
   - "8285"
   - "8472"
 
 calico_ports:
   - "179"
-  
+
 cni: "calico"

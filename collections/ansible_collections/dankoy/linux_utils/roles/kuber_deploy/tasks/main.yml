@@ -1,32 +1,34 @@
+---
 # Check number of nodes to play
 - name: Check if cluster consist of at least 3 nodes
-  fail: msg="Cluster must have at least 3 members"
+  ansible.builtin.fail:
+    msg: "Cluster must have at least 3 members"
   when: play_hosts|count() < 3
   run_once: true
-  tags: kuber-deploy 
-  
+  tags: kuber-deploy
+
 - name: Install all packages for CentOS-7
   ansible.builtin.dnf:
-    name: ['net-tools', 'wget', 'telnet', 'yum-utils', 'device-mapper-persistent-data', 'lvm2', 'iptables-services']
+    name: ["net-tools", "wget", "telnet", "yum-utils", "device-mapper-persistent-data", "lvm2", "iptables-services"]
     state: present
-#  delegate_to: "{{item}}"
-#  delegate_facts: True
-#  loop: "{{groups['cluster-test-master']}}"
-#  when: group_names | select('search','master') | list | count > 0
+  #  delegate_to: "{{item}}"
+  #  delegate_facts: True
+  #  loop: "{{groups['cluster-test-master']}}"
+  #  when: group_names | select('search','master') | list | count > 0
   tags: kuber-deploy
 
 - name: Disable SWAP since kubernetes can't work with swap enabled (1/2)
-  shell: |
+  ansible.builtin.shell: |
     swapoff -a
   tags: kuber-deploy
-  
-- name: disable swap
-  replace:
+
+- name: Disable swap
+  ansible.builtin.replace:
     path: "/etc/fstab"
-    regexp: '^(.+?swap+.*)$'
-    replace: '#\1'
+    regexp: "^(.+?swap+.*)$"
+    replace: "#\\1"
   tags: kuber-deploy
-  
+
 # Add nodes in /etc/hosts
 - name: Add hosts to /etc/hosts
   ansible.builtin.lineinfile:
@@ -37,87 +39,85 @@
   with_items: "{{ ansible_play_batch }}"
   tags: kuber-deploy
 
-- name: check if NetworkManager is used
-  service_facts:
-  tags: kuber-deploy  
-  
+- name: Check if NetworkManager is used
+  ansible.builtin.service_facts:
+  tags: kuber-deploy
+
 # Disable firewalld
-- name: stop and disable and mask firewalld
-  systemd:
+- name: Stop and disable and mask firewalld
+  ansible.builtin.systemd:
     name: firewalld
     state: stopped
-    enabled: no
-    masked: yes
+    enabled: false
+    masked: true
   when: ansible_facts.services["firewalld.service"].state == "running"
   tags: kuber-deploy
-  
+
 # start and enable iptables-services
-- name: start and enable iptables-services
-  systemd:
+- name: Start and enable iptables-services
+  ansible.builtin.systemd:
     name: iptables
     state: started
-    enabled: yes
-    masked: no
-  tags: kuber-deploy  
-  
+    enabled: true
+    masked: false
+  tags: kuber-deploy
+
 - name: Add br_netfilter module
   modprobe:
     name: br_netfilter
     state: present
   tags: kuber-deploy
-  
+
 - name: Add things in sysctl
   ansible.builtin.lineinfile:
   args:
     dest: "/etc/sysctl.conf"
     regexp: "^net.bridge.bridge-nf-call-iptables"
     line: "net.bridge.bridge-nf-call-iptables = 1"
-  notify: sysctl reload
-  tags: kuber-deploy  
-    
-- name: check if cluster already exists on master
-  command: kubeadm config view
+  notify: Sysctl reload
+  tags: kuber-deploy
+
+- name: Check if cluster already exists on master
+  ansible.builtin.command: kubeadm config view
   register: kubeadm_config
-#  when: "'master' in inventory_hostname"
+  #  when: "'master' in inventory_hostname"
   when: group_names | select('search','master') | list | count > 0
   tags: kuber-deploy
 
-- set_fact:
+- name: Set facts
+  ansible.builtin.set_fact:
     kuber_config: "{{ kubeadm_config }}"
-#  when: "'master' in inventory_hostname"
+  #  when: "'master' in inventory_hostname"
   when: group_names | select('search','master') | list | count > 0
   tags: kuber-deploy
-  
-- ansible.builtin.include_tasks: "iptables.yml"
+
+- name: Include iptables
+  ansible.builtin.include_tasks: "iptables.yml"
   tags: kuber-deploy
 
-- ansible.builtin.include_tasks: "docker.yml"
+- name: Include docker
+  ansible.builtin.include_tasks: "docker.yml"
   tags: kuber-deploy
-  
-- ansible.builtin.include_tasks: "kuber-install.yml"
+
+- name: Include kuber install
+  ansible.builtin.include_tasks: "kuber-install.yml"
   tags: kuber-deploy
-  
-- ansible.builtin.include_tasks: "kuber-config-flannel.yml"
-#  when: ("flannel" in cni)  and (hostvars[groups['cluster-test-master'][0]]['kuber_config'].failed) and ("'master' in inventory_hostname")
+
+- name: Include kuber config flunnel
+  ansible.builtin.include_tasks: "kuber-config-flannel.yml"
+  #  when: ("flannel" in cni)  and (hostvars[groups['cluster-test-master'][0]]['kuber_config'].failed) and ("'master' in inventory_hostname")
   when: ("flannel" in cni)  and (group_names | select('search','master') | list | count > 0) and (kubeadm_config.failed)
-  ignore_errors: True
+  ignore_errors: true
   tags: kuber-deploy
-  
-- ansible.builtin.include_tasks: "kuber-config-calico.yml"
-#  when: ("calico" in cni)  and (hostvars[groups['cluster-test-master'][0]]['kuber_config'].failed) and ("'master' in inventory_hostname")
-  when: ("calico" in cni)  and (group_names | select('search','master') | list | count > 0) and (kubeadm_config.failed)
-  ignore_errors: True
-  tags: kuber-deploy     
-  
-- ansible.builtin.include_tasks: "kuber-worker.yml"
-  when:  hostvars[groups['cluster-test-master'][0]]['kuber_config'].failed
-  tags: kuber-deploy
-  
-  
-  
 
-  
- 
-  
-  
-  
+- name: Include kuber config calico
+  ansible.builtin.include_tasks: "kuber-config-calico.yml"
+  #  when: ("calico" in cni)  and (hostvars[groups['cluster-test-master'][0]]['kuber_config'].failed) and ("'master' in inventory_hostname")
+  when: ("calico" in cni)  and (group_names | select('search','master') | list | count > 0) and (kubeadm_config.failed)
+  ignore_errors: true
+  tags: kuber-deploy
+
+- name: Include kuber worker
+  ansible.builtin.include_tasks: "kuber-worker.yml"
+  when: hostvars[groups['cluster-test-master'][0]]['kuber_config'].failed
+  tags: kuber-deploy

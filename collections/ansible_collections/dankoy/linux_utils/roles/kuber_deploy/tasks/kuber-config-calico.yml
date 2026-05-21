@@ -1,14 +1,11 @@
 ---
-  
-- name: kubeadm init --pod-network-cidr=192.168.0.0/16 CALICO
-  command: kubeadm init --pod-network-cidr=192.168.0.0/16
+- name: Kubeadm init --pod-network-cidr=192.168.0.0/16 CALICO
+  ansible.builtin.command: kubeadm init --pod-network-cidr=192.168.0.0/16
   when: "'master' in inventory_hostname"
   register: init
-  tags: kuber-deploy  
-  
-- name: kubectl apply CALICO network
-  command: kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/calico.yaml
-  when: "'master' in inventory_hostname"
-  tags: kuber-deploy  
-  
+  tags: kuber-deploy
 
+- name: Kubectl apply CALICO network
+  ansible.builtin.command: kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/calico.yaml
+  when: "'master' in inventory_hostname"
+  tags: kuber-deploy

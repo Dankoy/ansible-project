@@ -1,5 +1,3 @@
 ---
-
-- name: sysctl reload
-  command: sysctl -p
-
+- name: Sysctl reload
+  ansible.builtin.command: sysctl -p
