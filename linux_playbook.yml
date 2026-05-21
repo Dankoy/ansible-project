@@ -1,0 +1,11 @@
+---
+- name: Run roles
+  hosts: centos9
+  become: true
+
+  roles:
+    - dankoy.linux_utils.sudoers
+    - dankoy.linux_utils.groups
+    - dankoy.linux_utils.users
+    
+
