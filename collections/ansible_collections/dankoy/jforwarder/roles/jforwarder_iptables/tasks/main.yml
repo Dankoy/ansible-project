@@ -1,6 +1,5 @@
 ---
-
-#- name: Create docker-user chain
+# - name: Create docker-user chain
 #  iptables:
 #    chain: DOCKER-USER
 #    chain_management: true
@@ -14,7 +13,7 @@
   changed_when: false
   register: jforwarder_iptables_iptables_rules
   tags: jforwarder_iptables
-  
+
 - name: Create DOCKER-USER chain
   become: true
   ansible.builtin.command: iptables -N '{{ item }}'
@@ -41,7 +40,7 @@
     in_interface: "{{ ansible_default_ipv4.interface }}"
     protocol: tcp
     source: 192.168.1.57
-    destination_port: '5432'
+    destination_port: "5432"
     comment: db
   tags: jforwarder_iptables
 
@@ -54,7 +53,7 @@
     in_interface: "{{ ansible_default_ipv4.interface }}"
     protocol: tcp
     source: 192.168.1.57
-    destination_port: '5433'
+    destination_port: "5433"
     comment: db
   tags: jforwarder_iptables
 
@@ -66,7 +65,7 @@
     jump: ACCEPT
     in_interface: "{{ ansible_default_ipv4.interface }}"
     protocol: tcp
-    destination_port: '3000'
+    destination_port: "3000"
     comment: grafana
   tags: jforwarder_iptables
 
@@ -78,10 +77,9 @@
     jump: ACCEPT
     in_interface: "{{ ansible_default_ipv4.interface }}"
     protocol: tcp
-    destination_port: '9411'
+    destination_port: "9411"
     comment: zipkin
   tags: jforwarder_iptables
-
 
 - name: Allow prometheus
   become: true
@@ -91,7 +89,7 @@
     jump: ACCEPT
     in_interface: "{{ ansible_default_ipv4.interface }}"
     protocol: tcp
-    destination_port: '9090'
+    destination_port: "9090"
     comment: prometheus
   tags: jforwarder_iptables
 
@@ -103,7 +101,7 @@
     jump: ACCEPT
     in_interface: "{{ ansible_default_ipv4.interface }}"
     protocol: tcp
-    destination_port: '8080'
+    destination_port: "8080"
     comment: kafka-ui
   tags: jforwarder_iptables
 

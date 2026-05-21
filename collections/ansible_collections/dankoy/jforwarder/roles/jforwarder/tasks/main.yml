@@ -1,5 +1,4 @@
 ---
-
 - name: Create git folder in home
   ansible.builtin.file:
     path: ~/git/{{ PROJECT_NAME }}
@@ -90,7 +89,6 @@
     state: present
   tags: jforwarder
 
-
 - name: Add zipkin deps hourly to cron
   ansible.builtin.cron:
     name: "zipkin hourly"
@@ -98,7 +96,6 @@
     job: "docker exec --user root zipkin-dependencies /bin/sh /etc/periodic/hourly/zipkin-dependencies-today"
     state: present
   tags: jforwarder
-
 
 - name: Add backup to cron
   ansible.builtin.cron:
