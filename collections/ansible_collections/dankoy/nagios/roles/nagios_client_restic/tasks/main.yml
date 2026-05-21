@@ -1,5 +1,4 @@
 ---
-
 - name: Copy plugin to client machine
   ansible.builtin.copy:
     src: restic-check.sh
@@ -51,7 +50,7 @@
   ansible.builtin.lineinfile:
     path: /etc/sudoers.d/nrpe
     state: present
-    line: 'nrpe ALL=NOPASSWD: /usr/lib64/nagios/plugins/check_restic.sh *'
+    line: "nrpe ALL=NOPASSWD: /usr/lib64/nagios/plugins/check_restic.sh *"
     validate: /usr/sbin/visudo -cf %s
   when: st.stat.exists
   tags:

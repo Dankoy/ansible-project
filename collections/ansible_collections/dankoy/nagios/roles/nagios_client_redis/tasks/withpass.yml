@@ -1,3 +1,4 @@
+---
 - name: NRPE copy redis secret
   ansible.builtin.template:
     src: .redis.j2

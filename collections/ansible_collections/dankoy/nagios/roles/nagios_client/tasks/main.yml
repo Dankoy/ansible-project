@@ -1,5 +1,4 @@
 ---
-
 - name: Role nagios_client | Remove old NRPE
   ansible.builtin.dnf:
     state: absent
@@ -10,7 +9,7 @@
 
 - name: Role nagios_client | Install NRPE and plugins
   ansible.builtin.dnf:
-    name: ['nrpe', 'nagios-plugins', 'bc', 'sysstat', 'nagios-plugins-disk', 'nagios-plugins-load', 'nagios-plugins-swap']
+    name: ["nrpe", "nagios-plugins", "bc", "sysstat", "nagios-plugins-disk", "nagios-plugins-load", "nagios-plugins-swap"]
     state: present
   tags:
     - nagios
@@ -49,14 +48,14 @@
 #  register: iptablesrules
 #  always_run: yes
 #  changed_when: false  # Never report as changed
-#  tags: 
+#  tags:
 #    - nagios
 #    - nagios_client
 
 #- name: Role nagios_client. | Add iptable rule
 #  shell: /sbin/iptables -I INPUT 1 -s {{ nagios_ip }} -p tcp --dport 5666 -j ACCEPT -m comment --comment "nrpe" && service iptables save
 #  when: iptablesrules.stdout.find("/* nrpe */") == -1
-#  tags: 
+#  tags:
 #    - nagios
 #    - nagios_client
 

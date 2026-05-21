@@ -1,8 +1,7 @@
 ---
-
 - name: NRPE Install perl pkg's
   ansible.builtin.dnf:
-    name: ['perl-Redis']
+    name: ["perl-Redis"]
     state: present
   tags:
     - nagios

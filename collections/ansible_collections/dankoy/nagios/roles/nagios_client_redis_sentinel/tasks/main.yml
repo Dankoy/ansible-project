@@ -1,5 +1,4 @@
 ---
-
 - name: Copy plugin to client machine
   ansible.builtin.copy:
     src: check_redis_sentinel

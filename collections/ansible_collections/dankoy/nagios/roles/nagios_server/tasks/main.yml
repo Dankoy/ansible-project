@@ -1,3 +1,4 @@
+---
 - name: Copy nagios host cfg
   ansible.builtin.template:
     src: os.j2

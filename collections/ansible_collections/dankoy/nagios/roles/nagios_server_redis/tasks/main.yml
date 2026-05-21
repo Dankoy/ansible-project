@@ -1,5 +1,4 @@
 ---
-
 - name: Copy nagios host cfg
   ansible.builtin.template:
     src: redis.j2
