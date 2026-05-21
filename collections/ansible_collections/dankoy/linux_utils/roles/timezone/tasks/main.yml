@@ -4,7 +4,7 @@
   ansible.builtin.apt:
     update_cache: "yes"
     cache_valid_time: "3600"
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: timezone
 
 - name: Install tzdata
@@ -14,7 +14,7 @@
       - tzdata
     state: present
     update_cache: true
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: timezone
 
 - name: Set timezone

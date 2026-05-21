@@ -4,7 +4,14 @@
   ansible.builtin.apt:
     update_cache: "yes"
     cache_valid_time: "3600"
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
+  tags: packages
+
+- name: Update dnf cache
+  become: true
+  ansible.builtin.dnf:
+    update_cache: "yes"
+  when: ansible_facts['distribution'] == 'CentOS' or ansible_facts['distribution'] == 'RHEL'
   tags: packages
 
 - name: Install packages
@@ -14,5 +21,14 @@
     state: present
     update_cache: true
   loop: "{{ packages }}"
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
+  tags: packages
+
+- name: Install packages
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages }}"
+  when: ansible_facts['distribution'] == 'CentOS' or ansible_facts['distribution'] == 'RHEL'
   tags: packages

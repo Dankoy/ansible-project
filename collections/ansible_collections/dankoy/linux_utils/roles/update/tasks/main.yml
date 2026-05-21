@@ -4,7 +4,7 @@
   ansible.builtin.apt:
     update_cache: "yes"
     cache_valid_time: "3600"
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: update
 
 - name: Upgrade all
@@ -20,7 +20,7 @@
   register: reboot_required_file
   ansible.builtin.stat:
     path: /var/run/reboot-required
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: update
 
 - name: Reboot
@@ -32,5 +32,5 @@
     pre_reboot_delay: 0
     post_reboot_delay: 30
     test_command: uptime
-  when: reboot_required_file.stat.exists and ( ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' )
+  when: reboot_required_file.stat.exists and ( ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu' )
   tags: update
