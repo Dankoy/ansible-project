@@ -98,7 +98,7 @@
 # Enable pacemaker and corosync for CentOS-7 or OEL-7
 - name: Enable cluster services on all nodes
   ansible.builtin.service:
-    name: {{ item }}
+    name: { { item: !!null "" }: !!null "" }
     state: started
     enabled: true
   with_items:

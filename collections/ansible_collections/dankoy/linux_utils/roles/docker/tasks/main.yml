@@ -85,13 +85,13 @@
 - name: Setup docker user
   become: true
   ansible.builtin.user:
-    name: {{ item.user }}
+    name: { { item.user: !!null "" }: !!null "" }
     append: true
     groups: docker
-    uid: {{ item.uid }}
-    state: {{ item.state }}
-    comment: {{ item.comment }}
-    shell: {{ item.shell }}
+    uid: { { item.uid: !!null "" }: !!null "" }
+    state: { { item.state: !!null "" }: !!null "" }
+    comment: { { item.comment: !!null "" }: !!null "" }
+    shell: { { item.shell: !!null "" }: !!null "" }
   with_items: "{{ users }}"
   when: item.state == "present"
   ignore_errors: true

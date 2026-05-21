@@ -1,6 +1,6 @@
 ---
 - name: Remove old users
-  ipa_user:
+  community.general.ipa_user:
     name: "{{ item.user }}"
     state: absent
     ipa_host: idm1.linux.whatever.local
@@ -13,7 +13,7 @@
     - ipa-users-remove
 
 - name: Add users
-  ipa_user:
+  community.general.ipa_user:
     name: "{{ item.user }}"
     title: "{{ item.comment }}"
     displayname: "{{ item.fn + ' ' + item.ln }}"

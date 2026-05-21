@@ -19,6 +19,6 @@
 
 - name: Set timezone
   become: true
-  timezone:
+  community.general.timezone:
     name: "{{ timezone }}"
   tags: timezone

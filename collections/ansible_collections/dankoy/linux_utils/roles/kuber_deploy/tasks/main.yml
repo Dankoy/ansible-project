@@ -63,7 +63,7 @@
   tags: kuber-deploy
 
 - name: Add br_netfilter module
-  modprobe:
+  community.general.modprobe:
     name: br_netfilter
     state: present
   tags: kuber-deploy
