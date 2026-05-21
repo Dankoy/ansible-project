@@ -1,8 +1,7 @@
 ---
-
 - name: Make sure we have a 'wheel' group
   become: true
-  group:
+  ansible.builtin.group:
     name: wheel
     state: present
   tags: groups
@@ -12,7 +11,7 @@
   ansible.builtin.lineinfile:
     dest: /etc/sudoers.d/wheel
     state: present
-    regexp: '^%wheel'
-    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
-    validate: 'visudo -cf %s'
+    regexp: "^%wheel"
+    line: "%wheel ALL=(ALL) NOPASSWD: ALL"
+    validate: "visudo -cf %s"
   tags: groups
