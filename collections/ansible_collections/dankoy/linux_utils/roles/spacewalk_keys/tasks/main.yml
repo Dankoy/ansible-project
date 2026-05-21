@@ -1,46 +1,40 @@
 ---
-
 - name: Check if host has gpg key for spacewalk-client_2.8
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: be4b0bc2
   register: has_repo_key_28
   ignore_errors: true
-  changed_when: False
-  tags: 
+  changed_when: false
+  tags:
     - spacewalk-keys
     - spacewalk-client
-  
+
 - name: Check if host has gpg key for spacewalk-client_2.9
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: 9bd837ba
   register: has_repo_key_29
   ignore_errors: true
-  changed_when: False
-  tags: 
+  changed_when: false
+  tags:
     - spacewalk-keys
     - spacewalk-client
-  
+
 - name: Add key to keychain for spacewalk-2.8
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: https://copr-be.cloud.fedoraproject.org/results/%40spacewalkproject/spacewalk-2.8-client/pubkey.gpg
   when: has_repo_key_28 is failed
-  tags: 
+  tags:
     - spacewalk-keys
     - spacewalk-client
 
 - name: Add key to keychain for spacewalk-2.9
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: https://copr-be.cloud.fedoraproject.org/results/%40spacewalkproject/spacewalk-2.9-client/pubkey.gpg
   when: has_repo_key_29 is failed
-  tags: 
+  tags:
     - spacewalk-keys
     - spacewalk-client
-
-  
-
-  
-  
