@@ -4,7 +4,15 @@ virtualbox:
   hosts:
     centos9:
       ansible_host: 192.168.1.129
+    node1.vb-centos:
+      ansible_host: 127.0.0.1
+    node2.vb-centos:
+      ansible_host: 127.0.0.1
   children:
     jforwarder:
       hosts:
         centos9:
+    cluster:
+      hosts:
+        node1.vb-centos:
+        node2.vb-centos:
