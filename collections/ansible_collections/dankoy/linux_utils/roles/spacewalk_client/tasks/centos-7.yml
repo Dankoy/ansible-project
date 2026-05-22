@@ -4,7 +4,7 @@
     name:
       https://copr-be.cloud.fedoraproject.org/results/%40spacewalkproject/spacewalk-2.9-client/epel-7-x86_64/00830558-spacewalk-repo/spacewalk-client-repo-2.9-4.el7.noarch.rpm
     state: present
-  when: ansible_distribution == "CentOS"
+  when: ansible_facts['distribution'] == "CentOS"
   tags: spacewalk-client
 
 - name: Install all packages for client

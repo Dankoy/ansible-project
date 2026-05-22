@@ -4,7 +4,7 @@
     name:
       https://copr-be.cloud.fedoraproject.org/results/%40spacewalkproject/spacewalk-2.9-client/epel-6-x86_64/00830558-spacewalk-repo/spacewalk-client-repo-2.9-4.el6.noarch.rpm
     state: present
-  when: ansible_distribution == "CentOS"
+  when: ansible_facts['distribution'] == "CentOS"
   tags: spacewalk-client
 
 - name: Install all packages for client
@@ -26,7 +26,7 @@
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos6-share-sert-err.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") and
     (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1)
   tags: spacewalk-client
 

@@ -120,5 +120,5 @@
   become: true
   ansible.builtin.command: netfilter-persistent save
   notify: Restart iptables
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: jforwarder_iptables

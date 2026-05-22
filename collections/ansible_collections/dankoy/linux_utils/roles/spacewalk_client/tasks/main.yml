@@ -5,7 +5,7 @@
     src: rhnplugin-centos6.j2
     dest: /etc/yum/pluginconf.d/rhnplugin.conf
     backup: true
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6")
   tags: spacewalk-client
 
 - name: Write in rhnplugin.conf fro CentOS7
@@ -13,7 +13,7 @@
     src: rhnplugin-centos7.j2
     dest: /etc/yum/pluginconf.d/rhnplugin.conf
     backup: true
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7")
   tags: spacewalk-client
 
 - name: Write in rhnplugin.conf fro OEL7
@@ -21,7 +21,7 @@
     src: rhnplugin-oel7.j2
     dest: /etc/yum/pluginconf.d/rhnplugin.conf
     backup: true
-  when: (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7")
+  when: (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "7")
   tags: spacewalk-client
 
 - name: Check for previous registration
@@ -40,35 +40,35 @@
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos-6-ssl-err.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and (spw_registered.stdout.find("SSL3_GET_SERVER_CERTIFICATE") != -1)
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") and (spw_registered.stdout.find("SSL3_GET_SERVER_CERTIFICATE") != -1)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos6-share-sert-err.yml"
-  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and
-    (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1)) or ((ansible_distribution == "OracleLinux" and
-    ansible_distribution_major_version == "7") and (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1))
+  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") and
+    (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1)) or ((ansible_facts['distribution'] == "OracleLinux" and
+    ansible_facts['distribution_major_version'] == "7") and (repolist_registered.stderr.find("/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT") != -1))
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "system-id.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") and (spw_registered.stdout.find("unable to read system id") != -1) and
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stdout.find("unable to read system id") != -1) and
     (repolist_registered.stderr.find("/etc/sysconfig/rhn/RHN-ORG-TRUSTED-SSL-CERT"))
 
 - ansible.builtin.include_tasks: "system-id.yml"
-  when: (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") and (spw_registered.stdout.find("unable to read system id") != -1)
+  when: (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stdout.find("unable to read system id") != -1)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "oel-7.yml"
-  when: (ansible_distribution == "OracleLinux" and ansible_distribution_major_version == "7") and (spw_registered.stderr.find("No such file or directory")) and
+  when: (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stderr.find("No such file or directory")) and
     (spw_registered is failed)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos-6.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") and (spw_registered.stderr.find("No such file or directory")) and
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") and (spw_registered.stderr.find("No such file or directory")) and
     (spw_registered is failed)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos-7.yml"
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") and (spw_registered.stderr.find("No such file or directory")) and
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stderr.find("No such file or directory")) and
     (spw_registered is failed)
   tags: spacewalk-client
 

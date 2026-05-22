@@ -5,7 +5,7 @@
     repo: "deb https://ppa.launchpadcontent.net/liujianfeng1994/panfork-mesa/ubuntu/ {{ ansible_distribution_release }} main"
     state: present
     filename: panfork-mesa
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: armbian_3d_acceleration
 
 - name: Add repository into sources list
@@ -14,7 +14,7 @@
     repo: "deb https://ppa.launchpadcontent.net/liujianfeng1994/rockchip-multimedia/ubuntu/ {{ ansible_distribution_release }} main"
     state: present
     filename: rockchip-multimedia
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: armbian_3d_acceleration
 
 - name: Install packages
@@ -23,6 +23,6 @@
     name: "{{ item }}"
     state: present
     update_cache: true
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   loop: ["mali-g610-firmware", "rockchip-multimedia-config"]
   tags: armbian_3d_acceleration

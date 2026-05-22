@@ -23,8 +23,8 @@
 # Install cman for CentOS-6 or OEL-6
 - name: Install cman for CentOS-6
   ansible.builtin.dnf: name=cman state=present
-  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or (ansible_distribution == "OracleLinux" and
-    ansible_distribution_major_version == "6"))
+  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "OracleLinux" and
+    ansible_facts['distribution_major_version'] == "6"))
   tags: ha_cluster
 
 # Add nodes in /etc/hosts
@@ -104,8 +104,8 @@
   with_items:
     - pacemaker
     - corosync
-  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or (ansible_distribution == "OracleLinux" and
-    ansible_distribution_major_version == "7"))
+  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "OracleLinux" and
+    ansible_facts['distribution_major_version'] == "7"))
   tags: ha_cluster
 
 # Enable only pacemaker for CentOS-6 or OEL-6
@@ -114,8 +114,8 @@
     name: pacemaker
     state: started
     enabled: true
-  when: ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or (ansible_distribution == "OracleLinux" and
-    ansible_distribution_major_version == "6"))
+  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "OracleLinux" and
+    ansible_facts['distribution_major_version'] == "6"))
   tags: ha_cluster
 
 # Check cluster status
