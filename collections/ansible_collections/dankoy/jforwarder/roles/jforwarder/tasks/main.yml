@@ -1,4 +1,16 @@
 ---
+
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset:
+      - "user_id"
+  tags: jforwarder
+
+- name: Print current
+  ansible.builtin.debug:
+    msg: "User: {{ ansible_facts['user_id'] }}"
+  tags: jforwarder
+
 - name: Create git folder in home
   ansible.builtin.file:
     path: ~/git/{{ PROJECT_NAME }}
