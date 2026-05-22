@@ -1,11 +1,16 @@
 ---
-- name: Run roles
-  hosts: centos9
+# - name: Run roles
+#   hosts: centos9
+#   roles:
+#     - dankoy.linux_utils.default
+#     - dankoy.linux_utils.sudoers
+#     - dankoy.linux_utils.groups
+#     - dankoy.linux_utils.users
+#     - dankoy.linux_utils.ssh
+#     # - dankoy.jforwarder.jforwarder
+
+- name: Run roles for cluster
+  hosts: cluster
   roles:
-    # - dankoy.linux_utils.docker
-    - dankoy.jforwarder.jforwarder
     # - dankoy.linux_utils.default
-    # - dankoy.linux_utils.sudoers
-    # - dankoy.linux_utils.groups
-    # - dankoy.linux_utils.users
-    # - dankoy.linux_utils.ssh
+    - dankoy.linux_utils.ha_cluster
