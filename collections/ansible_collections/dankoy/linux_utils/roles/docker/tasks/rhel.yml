@@ -1,0 +1,46 @@
+---
+
+- name: Remove dependencies
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: absent
+    update_cache: true
+  with_items:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-engine
+  tags: docker
+
+- name: Install dependencies
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - dnf-plugins-core
+  tags: docker
+
+- name: Install docker repo
+  become: true
+  ansible.builtin.command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  tags: docker
+
+- name: Install docker
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - docker-ce 
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+  tags: docker
+
