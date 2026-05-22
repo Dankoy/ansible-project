@@ -21,15 +21,23 @@
     enabled: false
     state: stopped
   ignore_errors: true
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: iptables
 
 - name: Install iptables persistent
   become: true
   ansible.builtin.apt:
     name: "iptables-persistent"
-    state: latest
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    state: present
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
+  tags: iptables
+
+- name: Install iptables persistent
+  become: true
+  ansible.builtin.dnf:
+    name: "iptables-services"
+    state: present
+  when: ansible_facts['distribution'] == 'CentOS' or ansible_facts['distribution'] == 'RHEL'
   tags: iptables
 
 - name: Start and endble iptables persistent
@@ -38,7 +46,6 @@
     name: "{{ item }}"
     state: restarted
     enabled: true
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   loop: ["iptables"]
   tags: iptables
 
@@ -49,6 +56,7 @@
     ctstate: ESTABLISHED,RELATED
     jump: ACCEPT
     comment: Allow related and established
+    rule_num: 1
   tags: iptables
 
 - name: Allow localhost
@@ -58,6 +66,7 @@
     jump: ACCEPT
     in_interface: lo
     comment: Allow localhost
+    rule_num: 2
   tags: iptables
 
 - name: Allow new incoming SYN packets on TCP port 22 (SSH)
@@ -70,6 +79,7 @@
     syn: match
     jump: ACCEPT
     comment: Accept new SSH connections
+    rule_num: 3
   tags: iptables
 
 - name: Allow any and all types of ICMP packets on the input chain
@@ -78,6 +88,7 @@
     chain: INPUT
     protocol: icmp
     jump: ACCEPT
+    rule_num: 4
   tags: iptables
 
 - name: Allow monit
@@ -86,11 +97,12 @@
     action: insert
     chain: INPUT
     jump: ACCEPT
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
     protocol: tcp
-    source: any
+    source: "0.0.0.0"
     destination_port: "2812"
     comment: monit
+    rule_num: 5
   tags: iptables
 
 - name: Reject any
@@ -111,5 +123,12 @@
   become: true
   ansible.builtin.command: netfilter-persistent save
   notify: Restart iptables
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
+  tags: iptables
+
+- name: Save current state of the firewall in system file
+  become: true
+  ansible.builtin.command: service iptables save
+  notify: Restart iptables
+  when: ansible_facts['distribution'] == 'CentOS' or ansible_facts['distribution'] == 'RHEL'
   tags: iptables
