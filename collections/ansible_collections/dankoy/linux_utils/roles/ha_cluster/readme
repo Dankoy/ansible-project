@@ -3,6 +3,13 @@
 Что бы роль заработала, необходимо установить роль (указанную в requirements), и скопировать оттуда файлы модуля
 в директорию library роли.
 
+The quickest way is to simply have a folder called library/ in the same folder as your playbook. Inside this folder, place the python script for the Ansible Module. You should now have a corresponding task available to your playbook.
+
+If you want to share your module across multiple projects, then you can add an entry to /etc/ansible/ansible.cfg pointing to a shared library location, eg:
+
+library        = /usr/share/ansible/library
+
+
 
 Пока работает только с ДВУМЯ нодами.
 Чтобы роль работала правильно, необходимо:
