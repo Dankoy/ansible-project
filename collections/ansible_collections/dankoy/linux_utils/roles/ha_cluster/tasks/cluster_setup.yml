@@ -6,7 +6,7 @@
   register: pass
   run_once: true
   become: false
-  tags: ha-cluster
+  tags: ha_cluster
 
 # Create user hacluster
 - name: Create cluster system user
@@ -16,7 +16,7 @@
     shell: /sbin/nologin
     state: present
     password: "{{ pass.stdout | password_hash('sha512', ansible_hostname|replace('-','x')|truncate(16, True, '')) }}"
-  tags: ha-cluster
+  tags: ha_cluster
 
 # Authorize nodes
 - name: Authorize cluster nodes
@@ -26,7 +26,7 @@
     password: "{{ pass.stdout }}"
   with_items: "{{ play_hosts }}"
   run_once: true
-  tags: ha-cluster
+  tags: ha_cluster
 
 # Setup cluster
 - name: Setup cluster
@@ -35,13 +35,13 @@
     cluster_name: "{{ cluster_name }}"
     transport: "{{ cluster_transport }}"
   run_once: true
-  tags: ha-cluster
+  tags: ha_cluster
 
 # Start cluster on all nodes
 - name: Start cluster on all nodes
   ansible.builtin.command: pcs cluster start --all
   run_once: true
-  tags: ha-cluster
+  tags: ha_cluster
 
 # Only for two nodes cluster.
 # Disable property stonith-enabled
@@ -51,7 +51,7 @@
     value: "false"
   when: play_hosts|count() == 2
   run_once: true
-  tags: ha-cluster
+  tags: ha_cluster
 
 # Only for two nodes cluster.
 # Ignore quorum
@@ -61,4 +61,4 @@
     value: "ignore"
   when: play_hosts|count() == 2
   run_once: true
-  tags: ha-cluster
+  tags: ha_cluster

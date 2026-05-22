@@ -2,3 +2,4 @@
 cluster_user: hacluster
 cluster_name: cluster
 cluster_transport: udpu
+timezone: "Europe/Moscow"
