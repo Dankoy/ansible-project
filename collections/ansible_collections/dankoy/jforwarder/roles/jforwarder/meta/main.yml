@@ -1,6 +1,6 @@
 ---
 
 dependencies:
-  - role: jforwarder-iptables
+  - role: jforwarder_iptables
   - role: dankoy.linux_utils.docker
-  - role: dankoy.linux_utils.pg-client
+  - role: dankoy.linux_utils.pg_client
