@@ -11,7 +11,7 @@
   become: true
   ansible.builtin.apt:
     name: "*"
-    state: latest
+    state: present
   when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   tags: update
 
