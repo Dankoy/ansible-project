@@ -59,3 +59,11 @@ of ansible-core.
 ```shell
 ansible-playbook playbook.yml -i hosts/orange_armbian.yml -t docker  --vault-password-file=./vault/pass
 ```
+
+## Collections
+
+This repo contains collections of ansible roles
+1) jforwarder - for jforwarder project
+2) linux_utils - for linux administration
+3) nagios - for nagios client and server monitoring tasks
+
