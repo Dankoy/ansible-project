@@ -2,11 +2,13 @@
 - name: Include for OS 7
   ansible.builtin.include_tasks: "os-v7.yml"
   when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "RedHat" and
-    ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "7")
+    ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] ==
+    "7")
   tags: collectd_cgroup
 
 - name: Include for OS 6
   ansible.builtin.include_tasks: "os-v6.yml"
   when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "RedHat" and
-    ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "6")
+    ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] ==
+    "6")
   tags: collectd_cgroup

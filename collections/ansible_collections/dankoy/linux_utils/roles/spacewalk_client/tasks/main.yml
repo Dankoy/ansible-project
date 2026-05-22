@@ -40,7 +40,8 @@
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos-6-ssl-err.yml"
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") and (spw_registered.stdout.find("SSL3_GET_SERVER_CERTIFICATE") != -1)
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") and
+    (spw_registered.stdout.find("SSL3_GET_SERVER_CERTIFICATE") != -1)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos6-share-sert-err.yml"
@@ -50,26 +51,27 @@
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "system-id.yml"
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stdout.find("unable to read system id") != -1) and
-    (repolist_registered.stderr.find("/etc/sysconfig/rhn/RHN-ORG-TRUSTED-SSL-CERT"))
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stdout.find("unable to read
+    system id") != -1) and (repolist_registered.stderr.find("/etc/sysconfig/rhn/RHN-ORG-TRUSTED-SSL-CERT"))
 
 - ansible.builtin.include_tasks: "system-id.yml"
-  when: (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stdout.find("unable to read system id") != -1)
+  when: (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stdout.find("unable to read
+    system id") != -1)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "oel-7.yml"
-  when: (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stderr.find("No such file or directory")) and
-    (spw_registered is failed)
+  when: (ansible_facts['distribution'] == "OracleLinux" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stderr.find("No such file or
+    directory")) and (spw_registered is failed)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos-6.yml"
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") and (spw_registered.stderr.find("No such file or directory")) and
-    (spw_registered is failed)
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") and (spw_registered.stderr.find("No such file or
+    directory")) and (spw_registered is failed)
   tags: spacewalk-client
 
 - ansible.builtin.include_tasks: "centos-7.yml"
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stderr.find("No such file or directory")) and
-    (spw_registered is failed)
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") and (spw_registered.stderr.find("No such file or
+    directory")) and (spw_registered is failed)
   tags: spacewalk-client
 
 - name: Check if host has gpg key for spacewalk-client_2.8

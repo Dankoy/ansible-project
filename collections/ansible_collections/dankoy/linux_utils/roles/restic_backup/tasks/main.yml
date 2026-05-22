@@ -4,16 +4,16 @@
   ansible.builtin.command: "yum-config-manager --add-repo=https://copr.fedorainfracloud.org/coprs/copart/restic/repo/epel-6/copart-restic-epel-6.repo"
   args:
     creates: /etc/yum.repos.d/copart-restic-epel-6.repo
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "OracleLinux" and
-    ansible_facts['distribution_major_version'] == "6")
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "OracleLinux"
+    and ansible_facts['distribution_major_version'] == "6")
   tags: restic-backup
 
 - name: Add restic repo CentOS/OEL 7
   ansible.builtin.command: "yum-config-manager --add-repo=https://copr.fedorainfracloud.org/coprs/copart/restic/repo/epel-7/copart-restic-epel-7.repo"
   args:
     creates: /etc/yum.repos.d/copart-restic-epel-7.repo
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "OracleLinux" and
-    ansible_facts['distribution_major_version'] == "7")
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "OracleLinux"
+    and ansible_facts['distribution_major_version'] == "7")
   tags: restic-backup
 
 # ansible.builtin.dnf: install restic
@@ -21,8 +21,8 @@
   ansible.builtin.dnf:
     name: restic
     state: present
-  when: ((ansible_facts['distribution'] == "CentOS" or ansible_facts['distribution'] == "OracleLinux") and (ansible_facts['distribution_major_version'] == "7" or
-    ansible_facts['distribution_major_version'] == "6"))
+  when: ((ansible_facts['distribution'] == "CentOS" or ansible_facts['distribution'] == "OracleLinux") and (ansible_facts['distribution_major_version'] == "7"
+    or ansible_facts['distribution_major_version'] == "6"))
   tags: restic-backup
 
 - name: Copy restic rsyslog file

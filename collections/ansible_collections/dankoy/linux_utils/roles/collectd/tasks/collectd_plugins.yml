@@ -3,8 +3,8 @@
   ansible.builtin.dnf:
     name: collectd-disk
     state: present
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6" and "disk" in default_plugins) or (ansible_facts['distribution'] == "RedHat" and
-    ansible_facts['distribution_major_version'] == "6" and "disk" in default_plugins)
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6" and "disk" in default_plugins) or
+    (ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "6" and "disk" in default_plugins)
   tags: collectd
 
 - name: Collectd | Install mysql plugin
