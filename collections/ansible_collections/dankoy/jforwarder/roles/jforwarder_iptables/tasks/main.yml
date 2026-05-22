@@ -16,8 +16,9 @@
 
 - name: Create DOCKER-USER chain
   become: true
+  changed_when: false
   ansible.builtin.command: iptables -N '{{ item }}'
-  when: not jforwarder_iptables_iptables_rules.stdout is search("{{ item }}")
+  when: not jforwarder_iptables_iptables_rules.stdout is search('{{ item }}')
   with_items:
     - DOCKER-USER
   tags: jforwarder_iptables
@@ -28,7 +29,7 @@
     action: insert
     chain: DOCKER-USER
     jump: REJECT
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
   tags: jforwarder_iptables
 
 - name: Allow postgresql
@@ -37,7 +38,7 @@
     action: insert
     chain: DOCKER-USER
     jump: ACCEPT
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
     protocol: tcp
     source: 192.168.1.57
     destination_port: "5432"
@@ -50,7 +51,7 @@
     action: insert
     chain: DOCKER-USER
     jump: ACCEPT
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
     protocol: tcp
     source: 192.168.1.57
     destination_port: "5433"
@@ -63,7 +64,7 @@
     action: insert
     chain: DOCKER-USER
     jump: ACCEPT
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
     protocol: tcp
     destination_port: "3000"
     comment: grafana
@@ -75,7 +76,7 @@
     action: insert
     chain: DOCKER-USER
     jump: ACCEPT
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
     protocol: tcp
     destination_port: "9411"
     comment: zipkin
@@ -87,7 +88,7 @@
     action: insert
     chain: DOCKER-USER
     jump: ACCEPT
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
     protocol: tcp
     destination_port: "9090"
     comment: prometheus
@@ -99,7 +100,7 @@
     action: insert
     chain: DOCKER-USER
     jump: ACCEPT
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
     protocol: tcp
     destination_port: "8080"
     comment: kafka-ui
@@ -111,7 +112,7 @@
     action: insert
     chain: DOCKER-USER
     ctstate: ESTABLISHED,RELATED
-    in_interface: "{{ ansible_default_ipv4.interface }}"
+    in_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
     jump: ACCEPT
     comment: Allow related and established
   tags: jforwarder_iptables
@@ -121,4 +122,11 @@
   ansible.builtin.command: netfilter-persistent save
   notify: Restart iptables
   when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
+  tags: jforwarder_iptables
+
+- name: Save current state of the firewall in system file
+  become: true
+  ansible.builtin.command: service iptables save
+  notify: Restart iptables
+  when: ansible_facts['distribution'] == 'CentOS' or ansible_facts['distribution'] == 'RHEL'
   tags: jforwarder_iptables
