@@ -23,21 +23,21 @@
   tags: jforwarder
 
 - name: Copy env file for project
-  ansible.builtin.ansible.builtin.template:
+  ansible.builtin.template:
     src: project_env.j2
     dest: ~/git/{{ PROJECT_NAME }}/.env
     mode: "0440"
   tags: jforwarder
 
 - name: Copy env file for monitoring
-  ansible.builtin.ansible.builtin.template:
+  ansible.builtin.template:
     src: monitoring_env.j2
     dest: ~/git/{{ PROJECT_NAME }}/monitoring/.env
     mode: "0440"
   tags: jforwarder
 
 - name: Copy pgpass to home dir
-  ansible.builtin.ansible.builtin.template:
+  ansible.builtin.template:
     src: pgpass.j2
     dest: ~/.pgpass
     mode: "0600"
@@ -58,7 +58,7 @@
   tags: jforwarder
 
 - name: Copy backup script subscriptions-holder-db
-  ansible.builtin.ansible.builtin.template:
+  ansible.builtin.template:
     src: backup-subscriptions-holder-db-in-kuber.j2
     dest: ~/backups/{{ PROJECT_NAME }}/backup-subscriptions-holder-db-in-kuber.sh
     mode: "0764"
@@ -74,7 +74,7 @@
   tags: jforwarder
 
 - name: Copy backup script backup-telegram-chat-db
-  ansible.builtin.ansible.builtin.template:
+  ansible.builtin.template:
     src: backup-telegram-chat-db-in-kuber.j2
     dest: ~/backups/{{ PROJECT_NAME }}/backup-telegram-chat-db-in-kuber.sh
     mode: "0764"
