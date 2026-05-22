@@ -5,7 +5,7 @@
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     state: present
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-  tags: pg-client
+  tags: pg_client
 
 - name: Add repository into sources list
   become: true
@@ -14,14 +14,14 @@
     state: present
     filename: postgresql
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-  tags: pg-client
+  tags: pg_client
 
 - name: Update apt-get repo and cache
   become: true
   ansible.builtin.apt:
     update_cache: "yes"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-  tags: pg-client
+  tags: pg_client
 
 - name: Install packages
   become: true
@@ -30,4 +30,4 @@
     state: present
     update_cache: true
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-  tags: pg-client
+  tags: pg_client
