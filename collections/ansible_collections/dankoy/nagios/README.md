@@ -2,6 +2,10 @@
 
 This repository contains the `dankoy.nagios` Ansible Collection.
 
+Collection of roles for nagios services managing.
+
+This collection is not pushed into ansible galaxy.
+
 ## Tested with Ansible
 
 Tested with ansible-core >=2.14 releases and the current development version of

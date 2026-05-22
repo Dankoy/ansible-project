@@ -50,6 +50,9 @@ of ansible-core.
 
 ## Usage
 
+> [!NOTE]
+> These collections was not pushed to galaxy
+
 1) Add file with vault password into some directory.
 2) Run role
 
