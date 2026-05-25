@@ -6,6 +6,7 @@
   register: pass
   run_once: true
   become: false
+  changed_when: false
   tags: ha_cluster
 
 # Create user hacluster
@@ -20,7 +21,7 @@
 
 # Authorize nodes
 - name: Authorize cluster nodes
-  pcs_auth:
+  community.general.pcs_auth:
     node_name: "{{ hostvars[item]['ansible_fqdn'].split('.')[0] }}"
     username: "{{ cluster_user }}"
     password: "{{ pass.stdout }}"
@@ -47,8 +48,8 @@
 # Disable property stonith-enabled
 - name: Stonith disable
   pcs_property:
-    name: "stonith-enabled"
-    value: "false"
+    name: 'stonith-enabled'
+    value: false
   when: play_hosts|count() == 2
   run_once: true
   tags: ha_cluster
@@ -57,8 +58,8 @@
 # Ignore quorum
 - name: Quorum ignore
   pcs_property:
-    name: "no-quorum-policy"
-    value: "ignore"
+    name: 'no-quorum-policy'
+    value: 'ignore'
   when: play_hosts|count() == 2
   run_once: true
   tags: ha_cluster
