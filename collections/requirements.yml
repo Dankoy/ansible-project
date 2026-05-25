@@ -1,13 +1,10 @@
 ---
 collections:
   - name: ansible.posix
-    version: 1.4.0
 
   - name: ansible.scm
-    version: 3.1.0
 
   - name: ansible.utils
-    version: 4.0.0
 
   # - name: https://github.com/redhat-cop/network.backup
   #   type: git
@@ -19,5 +16,4 @@ collections:
 
   - name: community.general
 
-roles:
-  - name: ondrejhome.pcs-modules-2 # necessary for ha_cluster role
+  - name: ondrejhome.ha_cluster # for my ha_cluster role
