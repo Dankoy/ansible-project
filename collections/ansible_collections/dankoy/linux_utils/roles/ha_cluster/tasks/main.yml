@@ -1,4 +1,5 @@
 ---
+
 # Check number of nodes to play
 - name: Check if cluster consist of at least 2 nodes
   ansible.builtin.fail:
@@ -83,20 +84,26 @@
 
 # Check cluster status. If cluster is working then no manipulations with cluster are allowed
 - name: Check status of cluster
+  become: true
   ignore_errors: true
   changed_when: false
   ansible.builtin.command: pcs cluster status
   register: ha_cluster_cluster_status_registered
-  tags: ha_cluster
+  tags:
+    - ha_cluster
+    - cluster_setup
 
 # If cluster is not working, then include tasks to create cluster user, auth, setup and start cluster. Alse stonith disables and ignores quorum.
 - name: Include cluster construction yml
   ansible.builtin.include_tasks: "cluster_setup.yml"
   when: (ha_cluster_cluster_status_registered.stderr.find("cluster is not currently running on this node") and (ha_cluster_cluster_status_registered is failed))
-  tags: ha_cluster
+  tags:
+    - ha_cluster
+    - cluster_setup
 
 # Enable pacemaker and corosync for CentOS-7 or OEL-7
 - name: Enable cluster services on all nodes
+  become: true
   ansible.builtin.service:
     name: "{{ item }}"
     state: started
@@ -110,6 +117,7 @@
 
 # Enable only pacemaker for CentOS-6 or OEL-6
 - name: Enable cluster services on all nodes
+  become: true
   ansible.builtin.service:
     name: pacemaker
     state: started
@@ -120,6 +128,7 @@
 
 # Check cluster status
 - name: Check status of cluster
+  become: true
   changed_when: false
   ansible.builtin.command: pcs cluster status
   register: ha_cluster_cluster_status_registered

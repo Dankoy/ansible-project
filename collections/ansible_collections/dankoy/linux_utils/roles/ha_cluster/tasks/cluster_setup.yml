@@ -1,65 +1,104 @@
 ---
-# Generate password locally
-- name: Generate password localy
-  ansible.builtin.command: pwgen 24 1 -B
-  delegate_to: localhost
-  register: pass
-  run_once: true
-  become: false
-  changed_when: false
-  tags: ha_cluster
 
-# Create user hacluster
-- name: Create cluster system user
-  ansible.builtin.user:
-    name: "{{ cluster_user }}"
-    comment: "cluster user"
-    shell: /sbin/nologin
-    state: present
-    password: "{{ pass.stdout | password_hash('sha512', ansible_hostname|replace('-','x')|truncate(16, True, '')) }}"
-  tags: ha_cluster
+- name: Block check cluster
+  become: true
+  tags:
+    - ha_cluster
+    - cluster_setup
+  block:
+    # Check cluster status. If cluster is working then no manipulations with cluster are allowed
+    - name: Check status of cluster
+      changed_when: false
+      ignore_errors: true
+      ansible.builtin.command: pcs cluster status
+      register: ha_cluster_cluster_status_registered
 
-# Authorize nodes
-- name: Authorize cluster nodes
-  community.general.pcs_auth:
-    node_name: "{{ hostvars[item]['ansible_fqdn'].split('.')[0] }}"
-    username: "{{ cluster_user }}"
-    password: "{{ pass.stdout }}"
-  with_items: "{{ play_hosts }}"
-  run_once: true
-  tags: ha_cluster
+    - name: Stop if cluster working
+      ansible.builtin.fail:
+        msg: Cluster is working. Abort play.
+      when: (ha_cluster_cluster_status_registered.stdout.find("Online") and (ha_cluster_cluster_status_registered is not failed))
 
-# Setup cluster
-- name: Setup cluster
-  pcs_cluster:
-    node_list: "{% for item in play_hosts %}{{ hostvars[item]['ansible_hostname'] }} {% endfor %}"
-    cluster_name: "{{ cluster_name }}"
-    transport: "{{ cluster_transport }}"
-  run_once: true
-  tags: ha_cluster
 
-# Start cluster on all nodes
-- name: Start cluster on all nodes
-  ansible.builtin.command: pcs cluster start --all
-  run_once: true
-  tags: ha_cluster
+- name: Block for cluster configuration
+  become: true
+  tags:
+    - ha_cluster
+    - cluster_setup
+  block:
+    # Generate password locally
+    - name: Generate password localy
+      ansible.builtin.command: pwgen 24 1 -B
+      delegate_to: localhost
+      register: ha_cluster_password
+      run_once: true
+      become: false
+      changed_when: false
 
-# Only for two nodes cluster.
-# Disable property stonith-enabled
-- name: Stonith disable
-  pcs_property:
-    name: 'stonith-enabled'
-    value: false
-  when: play_hosts|count() == 2
-  run_once: true
-  tags: ha_cluster
+    # Create user hacluster
+    - name: Create cluster system user
+      ansible.builtin.user:
+        name: "{{ cluster_user }}"
+        comment: "cluster user"
+        shell: /sbin/nologin
+        state: present
+        password: "{{ ha_cluster_password.stdout | password_hash('sha512', ansible_facts['hostname']) }}"
 
-# Only for two nodes cluster.
-# Ignore quorum
-- name: Quorum ignore
-  pcs_property:
-    name: 'no-quorum-policy'
-    value: 'ignore'
-  when: play_hosts|count() == 2
+    # Authorize nodes
+    - name: Authorize cluster nodes
+      # ansible.builtin.command: "pcs host auth {{ hostvars[item]['ansible_fqdn'].split('.')[0] }} -u {{ cluster_user }} -p {{ ha_clister_password.stdout }}"
+      ondrejhome.ha_cluster.pcs_auth:
+        node_name: "{{ hostvars[item]['ansible_fqdn'].split('.')[0] }}"
+        username: "{{ cluster_user }}"
+        password: "{{ ha_cluster_password.stdout }}"
+        state: 'present'
+      with_items: "{{ ansible_play_batch }}"
+
+- name: Block cluster setup
+  become: true
   run_once: true
-  tags: ha_cluster
+  tags:
+    - ha_cluster
+    - cluster_setup
+  block:
+    # Setup cluster
+    - name: Setup cluster
+      ondrejhome.ha_cluster.pcs_cluster:
+        node_list: "{% for item in ansible_play_batch %}{{ hostvars[item]['ansible_hostname'] }} {% endfor %}"
+        cluster_name: "{{ cluster_name }}"
+        transport: "{{ cluster_transport }}"
+        state: present
+      with_items: "{{ ansible_play_batch }}"
+
+    # Start cluster on all nodes
+    - name: Start cluster on all nodes
+      changed_when: false
+      ansible.builtin.command: pcs cluster start --all
+      when: (ha_cluster_cluster_status_registered.stderr.find("cluster is not currently running on this node") and (ha_cluster_cluster_status_registered is failed))
+
+    - name: Wait for 10 seconds
+      ansible.builtin.pause:
+        seconds: 10
+
+- name: Block set properties
+  become: true
+  run_once: true
+  tags:
+    - ha_cluster
+    - cluster_setup
+  block:
+    # Only for two nodes cluster.
+    # Disable property stonith-enabled
+    - name: Stonith disable
+      ondrejhome.ha_cluster.pcs_property:
+        name: 'stonith-enabled'
+        value: 'false'
+      when: ansible_play_batch|count() == 2
+
+    # Only for two nodes cluster.
+    # Ignore quorum
+    - name: Quorum ignore
+      ondrejhome.ha_cluster.pcs_property:
+        name: 'no-quorum-policy'
+        value: 'ignore'
+      when: ansible_play_batch|count() == 2
+
