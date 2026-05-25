@@ -1,7 +1,4 @@
-Используется кастомный модуль для работы с кластером - https://galaxy.ansible.com/OndrejHome/pcs-modules-2/
-
-Что бы роль заработала, необходимо установить роль (указанную в requirements), и скопировать оттуда файлы модуля
-в директорию library роли.
+Используется кастомный модуль для работы с кластером - https://galaxy.ansible.com/OndrejHome/pcs-modules-2/, а именно коллекция https://galaxy.ansible.com/ui/repo/published/ondrejhome/ha_cluster/docs/
 
 The quickest way is to simply have a folder called library/ in the same folder as your playbook. Inside this folder, place the python script for the Ansible Module. You should now have a corresponding task available to your playbook.
 
@@ -32,7 +29,7 @@ main.yml:
 1) Проверка количества нод в плэйбуке
 2) Выставление зоны времени
 3) Установка пакетов:
-    pacemaker, pcs, corosync - Для CentOS-7
+    pacemaker, pcs, corosync - Для CentOS-7,8,9
     pacemaker, pcs, corosync, cman - Для CentOS-6
 4) Добавление нод в /etc/hosts. Будет использована переменная cluster_interface. Будет использованы короткие имена хостов, например:
     10.208.30.19 node1.linux.cluster.test   node1
