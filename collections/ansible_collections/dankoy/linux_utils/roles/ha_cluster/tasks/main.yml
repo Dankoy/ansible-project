@@ -1,5 +1,4 @@
 ---
-
 # Check number of nodes to play
 - name: Check if cluster consist of at least 2 nodes
   ansible.builtin.fail:

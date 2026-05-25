@@ -1,5 +1,4 @@
 ---
-
 - name: Block check cluster
   become: true
   tags:
@@ -17,7 +16,6 @@
       ansible.builtin.fail:
         msg: Cluster is working. Abort play.
       when: (ha_cluster_cluster_status_registered.stdout.find("Online") and (ha_cluster_cluster_status_registered is not failed))
-
 
 - name: Block for cluster configuration
   become: true
@@ -50,7 +48,7 @@
         node_name: "{{ hostvars[item]['ansible_fqdn'].split('.')[0] }}"
         username: "{{ cluster_user }}"
         password: "{{ ha_cluster_password.stdout }}"
-        state: 'present'
+        state: "present"
       with_items: "{{ ansible_play_batch }}"
 
 - name: Block cluster setup
@@ -73,7 +71,8 @@
     - name: Start cluster on all nodes
       changed_when: false
       ansible.builtin.command: pcs cluster start --all
-      when: (ha_cluster_cluster_status_registered.stderr.find("cluster is not currently running on this node") and (ha_cluster_cluster_status_registered is failed))
+      when: (ha_cluster_cluster_status_registered.stderr.find("cluster is not currently running on this node") and (ha_cluster_cluster_status_registered is
+        failed))
 
     - name: Wait for 10 seconds
       ansible.builtin.pause:
@@ -90,15 +89,14 @@
     # Disable property stonith-enabled
     - name: Stonith disable
       ondrejhome.ha_cluster.pcs_property:
-        name: 'stonith-enabled'
-        value: 'false'
+        name: "stonith-enabled"
+        value: "false"
       when: ansible_play_batch|count() == 2
 
     # Only for two nodes cluster.
     # Ignore quorum
     - name: Quorum ignore
       ondrejhome.ha_cluster.pcs_property:
-        name: 'no-quorum-policy'
-        value: 'ignore'
+        name: "no-quorum-policy"
+        value: "ignore"
       when: ansible_play_batch|count() == 2
-

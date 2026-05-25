@@ -1,5 +1,4 @@
 ---
-
 - name: Install all packages for CentOS-6, OEL-6
   become: true
   ansible.builtin.dnf:

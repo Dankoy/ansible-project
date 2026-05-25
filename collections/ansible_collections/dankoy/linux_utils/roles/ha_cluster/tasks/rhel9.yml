@@ -1,5 +1,4 @@
 ---
-
 - name: Enable highavailability repo
   become: true
   ansible.builtin.command: dnf config-manager --set-enabled highavailability
