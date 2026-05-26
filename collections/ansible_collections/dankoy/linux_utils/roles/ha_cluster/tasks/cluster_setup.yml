@@ -95,16 +95,13 @@
   block:
     # Only for two nodes cluster.
     # Disable property stonith-enabled
+    # ondrejhome.ha_cluster.pcs_property doesn't work with community.general version 13
     - name: Stonith disable
-      ondrejhome.ha_cluster.pcs_property:
-        name: "stonith-enabled"
-        value: "false"
+      ansible.builtin.command: "pcs property set stonith-enabled=false"
       when: ansible_play_batch|count() == 2
 
     # Only for two nodes cluster.
     # Ignore quorum
     - name: Quorum ignore
-      ondrejhome.ha_cluster.pcs_property:
-        name: "no-quorum-policy"
-        value: "ignore"
+      ansible.builtin.command: "pcs property set stonith-enabled=false"
       when: ansible_play_batch|count() == 2
