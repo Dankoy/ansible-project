@@ -1,0 +1,28 @@
+---
+- name: Block | install packages
+  become: true
+  tags: ha_cluster
+  notify: Enable and start PCSD service
+  block:
+    - name: Enable highavailability repo for CentOS,OEL - 9
+      community.general.dnf_config_manager:
+        name: highavailability
+        state: enabled
+      when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "9") or (ansible_facts['distribution'] ==
+        "OracleLinux" and ansible_facts['distribution_major_version'] == "9"))
+
+    - name: Install all packages for CentOS,OEL - 7,8,9
+      ansible.builtin.dnf:
+        name: ["pacemaker", "pcs", "corosync"]
+        state: present
+      when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] ==
+        "OracleLinux" and ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "CentOS" and
+        ansible_facts['distribution_major_version'] == "8") or (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] ==
+        "9"))
+
+    - name: Install all packages for CentOS,OEL - 6
+      ansible.builtin.dnf:
+        name: ["pacemaker", "pcs", "corosync", "cman"]
+        state: present
+      when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] ==
+        "OracleLinux" and ansible_facts['distribution_major_version'] == "6"))
