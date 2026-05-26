@@ -6,11 +6,8 @@
     - cluster_setup
   block:
     # Check cluster status. If cluster is working then no manipulations with cluster are allowed
-    - name: Check status of cluster
-      changed_when: false
-      ignore_errors: true
-      ansible.builtin.command: pcs cluster status
-      register: ha_cluster_cluster_status_registered
+    - name: Include cluster status and print item
+      ansible.builtin.include_tasks: "cluster_status.yml"
 
     - name: Stop if cluster working
       ansible.builtin.fail:
@@ -74,9 +71,20 @@
       when: (ha_cluster_cluster_status_registered.stderr.find("cluster is not currently running on this node") and (ha_cluster_cluster_status_registered is
         failed))
 
-    - name: Wait for 10 seconds
+    - name: Wait for 5 seconds
       ansible.builtin.pause:
-        seconds: 10
+        seconds: 5
+
+- name: Block | Check status and enable cluster service
+  tags:
+    - ha_cluster
+    - cluster_setup
+  notify:
+    - Enable cluster services on all nodes for RHEL,OEL - 7,8,9
+    - Enable cluster services on all nodes for RHEL,OEL - 6
+  block:
+    - name: Include cluster status
+      ansible.builtin.include_tasks: "cluster_status.yml"
 
 - name: Block set properties
   become: true
