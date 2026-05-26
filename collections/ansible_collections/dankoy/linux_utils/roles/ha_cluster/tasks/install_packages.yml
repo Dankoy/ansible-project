@@ -2,7 +2,6 @@
 - name: Block | install packages
   become: true
   tags: ha_cluster
-  notify: Enable and start PCSD service
   block:
     - name: Enable highavailability repo for CentOS,OEL - 9
       community.general.dnf_config_manager:
@@ -26,3 +25,9 @@
         state: present
       when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] ==
         "OracleLinux" and ansible_facts['distribution_major_version'] == "6"))
+
+    - name: Make sure PCSD is enabled and running
+      ansible.builtin.service:
+        name: pcsd
+        state: started
+        enabled: true
