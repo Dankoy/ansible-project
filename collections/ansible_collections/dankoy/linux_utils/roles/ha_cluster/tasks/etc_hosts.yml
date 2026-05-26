@@ -1,0 +1,26 @@
+---
+# - name: Print output to file
+#   ansible.builtin.copy:
+#     content: "{{ hostvars[item] }}"
+#     dest: "./{{ item }}.json"
+#   delegate_to: localhost
+#   with_items: "{{ ansible_play_batch }}"
+
+# Add nodes in /etc/hosts
+- name: Add hosts to /etc/hosts
+  become: true
+  ansible.builtin.lineinfile:
+  args:
+    dest: "/etc/hosts"
+    regexp: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}"
+    line: "{{ hostvars[item]['ansible_' + cluster_interface]['ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}   {{ hostvars[item]['ansible_fqdn'].split('.')[0]
+      }}"
+  with_items: "{{ ansible_play_batch }}"
+  tags: ha_cluster
+
+# Can use jinja2 template (works properly)
+# - name: write template to /etc/hosts
+#  ansible.builtin.template:
+#   src: hosts.j2
+#   dest: /etc/hosts
+#  tags: ha_cluster
