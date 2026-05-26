@@ -1,0 +1,21 @@
+---
+# Check cluster status
+- name: Check status of cluster
+  become: true
+  changed_when: false
+  ignore_errors: true
+  ansible.builtin.command: pcs cluster status
+  register: ha_cluster_cluster_status_registered
+  tags: ha_cluster
+
+- name: Set fact for cluster status
+  ansible.builtin.set_fact:
+    ha_cluster_cluster_status_registered: "{{ ha_cluster_cluster_status_registered }}"
+  tags: ha_cluster
+
+# Print cluster status
+- name: Print debug messages
+  changed_when: false
+  ansible.builtin.debug:
+    var: ha_cluster_cluster_status_registered
+  tags: ha_cluster
