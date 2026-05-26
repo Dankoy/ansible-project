@@ -13,49 +13,13 @@
     name: "{{ timezone }}"
   tags: ha_cluster
 
-- name: Include rhel9
-  ansible.builtin.include_tasks: "rhel9.yml"
-  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "9") or (ansible_facts['distribution'] == "OracleLinux"
-    and ansible_facts['distribution_major_version'] == "9"))
+- name: Include install packages
+  ansible.builtin.include_tasks: "install_packages.yml"
   tags: ha_cluster
 
-- name: Include rhel7
-  ansible.builtin.include_tasks: "rhel7.yml"
-  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "OracleLinux"
-    and ansible_facts['distribution_major_version'] == "7"))
+- name: Include /etc/hosts configuration
+  ansible.builtin.include_tasks: "etc_hosts.yml"
   tags: ha_cluster
-
-- name: Include rhel6
-  ansible.builtin.include_tasks: "rhel6.yml"
-  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "OracleLinux"
-    and ansible_facts['distribution_major_version'] == "6"))
-  tags: ha_cluster
-
-# - name: Print output to file
-#   ansible.builtin.copy:
-#     content: "{{ hostvars[item] }}"
-#     dest: "./{{ item }}.json"
-#   delegate_to: localhost
-#   with_items: "{{ ansible_play_batch }}"
-
-# Add nodes in /etc/hosts
-- name: Add hosts to /etc/hosts
-  become: true
-  ansible.builtin.lineinfile:
-  args:
-    dest: "/etc/hosts"
-    regexp: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}"
-    line: "{{ hostvars[item]['ansible_' + cluster_interface]['ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}   {{ hostvars[item]['ansible_fqdn'].split('.')[0]
-      }}"
-  with_items: "{{ ansible_play_batch }}"
-  tags: ha_cluster
-
-# Can use jinja2 template (works properly)
-#- name: write template to /etc/hosts
-#  ansible.builtin.template:
-#   src: hosts.j2
-#   dest: /etc/hosts
-#  tags: ha_cluster
 
 - name: Add firewalld rule
   become: true
@@ -63,34 +27,27 @@
     permanent: true
     service: high-availability
     state: enabled
+  notify: Reload firewalld
   tags: ha_cluster
 
-- name: Reload firewalld
-  become: true
-  ansible.builtin.service:
-    name: firewalld
-    state: reloaded
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
   tags: ha_cluster
 
-# Enable pcsd
-- name: Enable and start PCSD service
-  become: true
-  ansible.builtin.service:
-    name: pcsd
-    state: started
-    enabled: true
+- name: Include cluster status and print it
+  ansible.builtin.include_tasks: "cluster_status.yml"
   tags: ha_cluster
 
-# Check cluster status. If cluster is working then no manipulations with cluster are allowed
-- name: Check status of cluster
-  become: true
-  ignore_errors: true
-  changed_when: false
-  ansible.builtin.command: pcs cluster status
-  register: ha_cluster_cluster_status_registered
-  tags:
-    - ha_cluster
-    - cluster_setup
+# # Check cluster status. If cluster is working then no manipulations with cluster are allowed
+# - name: Check status of cluster
+#   become: true
+#   ignore_errors: true
+#   changed_when: false
+#   ansible.builtin.command: pcs cluster status
+#   register: ha_cluster_cluster_status_registered
+#   tags:
+#     - ha_cluster
+#     - cluster_setup
 
 # If cluster is not working, then include tasks to create cluster user, auth, setup and start cluster. Alse stonith disables and ignores quorum.
 - name: Include cluster construction yml
@@ -100,42 +57,6 @@
     - ha_cluster
     - cluster_setup
 
-# Enable pacemaker and corosync for CentOS-7 or OEL-7
-- name: Enable cluster services on all nodes
-  become: true
-  ansible.builtin.service:
-    name: "{{ item }}"
-    state: started
-    enabled: true
-  with_items:
-    - pacemaker
-    - corosync
-  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7") or (ansible_facts['distribution'] == "OracleLinux"
-    and ansible_facts['distribution_major_version'] == "7"))
-  tags: ha_cluster
-
-# Enable only pacemaker for CentOS-6 or OEL-6
-- name: Enable cluster services on all nodes
-  become: true
-  ansible.builtin.service:
-    name: pacemaker
-    state: started
-    enabled: true
-  when: ((ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or (ansible_facts['distribution'] == "OracleLinux"
-    and ansible_facts['distribution_major_version'] == "6"))
-  tags: ha_cluster
-
-# Check cluster status
-- name: Check status of cluster
-  become: true
-  changed_when: false
-  ansible.builtin.command: pcs cluster status
-  register: ha_cluster_cluster_status_registered
-  tags: ha_cluster
-
-# Print cluster status
-- name: Print debug messages
-  changed_when: false
-  ansible.builtin.debug:
-    var: ha_cluster_cluster_status_registered
+- name: Include cluster status and print item
+  ansible.builtin.include_tasks: "cluster_status.yml"
   tags: ha_cluster
