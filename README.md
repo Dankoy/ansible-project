@@ -53,8 +53,14 @@ of ansible-core.
 > [!NOTE]
 > These collections was not pushed to galaxy
 
-1) Add file with vault password into some directory.
-2) Run role
+1) Install requirements 
+
+```shell
+ansible-galaxy install -r collections/requirements.yml
+```
+
+2) Add file with vault password into some directory.
+3) Run role
 
 ```shell
 ansible-playbook playbook.yml -i hosts/orange_armbian.yml -t docker  --vault-password-file=./vault/pass
